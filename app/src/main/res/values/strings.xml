@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">CourseWork</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="authHeader">Авторизация</string>
+    <string name="e_mail">E-mail</string>
+    <string name="password">Пароль</string>
+    <string name="confidentialPolicy">Согласен с политикой конфиденциальности</string>
+    <string name="dataProcessingPolicy">Согласен с обработкой данных</string>
+    <string name="notificationsPolicy">Согласен с отправкой уведомлений</string>
+    <string name="registrationButton">Регистрация</string>
+    <string name="loginButton">Войти</string>
+</resources>
