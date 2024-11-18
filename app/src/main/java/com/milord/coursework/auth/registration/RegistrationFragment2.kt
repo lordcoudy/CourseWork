@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.scale
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.MainActivity
@@ -26,11 +28,20 @@ import com.yandex.mapkit.location.LocationListener
 import com.yandex.mapkit.location.LocationManager
 import com.yandex.mapkit.location.LocationStatus
 import com.yandex.mapkit.location.Purpose
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
 import java.util.Locale
+import kotlin.math.ceil
+import kotlin.math.floor
 
-class RegistrationFragment2 : Fragment() {
+class RegistrationFragment2 : Fragment(), CameraListener
+{
     private lateinit var binding: FragmentRegistration2Binding
     private lateinit var mapView: MapView
     private lateinit var locationManager: LocationManager
@@ -41,46 +52,65 @@ class RegistrationFragment2 : Fragment() {
     private val MINIMAL_DISTANCE: Double = 1.0
     private val USE_IN_BACKGROUND: Boolean = false
     private val COMFORTABLE_ZOOM_LEVEL: Float = 18F
+    private var zoomValue = COMFORTABLE_ZOOM_LEVEL
     private val userViewModel = UserViewModel.getInstance()
     private var user: UserData? = null
+    private lateinit var mapObjectCollection: MapObjectCollection
+    private lateinit var placemarkMapObject: PlacemarkMapObject
 
-    companion object {
+    companion object
+    {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("MAPKIT_API_KEY")
+        MapKitFactory.setApiKey("926371cc-dc6d-4a4b-b8f2-fedd9a25585d")
         MapKitFactory.initialize(requireContext())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View
+    {
         binding = FragmentRegistration2Binding.inflate(layoutInflater)
         mapView = binding.mapview
+        binding.mapview.map.addCameraListener(this)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
         super.onViewCreated(view, savedInstanceState)
         user = userViewModel.userData.value
+
+
+
+
         locationManager = MapKitFactory.getInstance().createLocationManager()
-        locationListener = object : LocationListener {
-            override fun onLocationUpdated(location: Location) {
-                if (curLocation == null) {
+        locationListener = object : LocationListener
+        {
+            override fun onLocationUpdated(location: Location)
+            {
+                if (curLocation == null)
+                {
                     moveCamera(location.position, COMFORTABLE_ZOOM_LEVEL)
                 }
                 curLocation = location.position
+                setMarkerInCurLocation()
                 val mGeocoder = Geocoder(requireContext(), Locale.getDefault())
                 var addressString = ""
                 // Reverse-Geocoding starts
-                val addresses = mGeocoder.getFromLocation(curLocation!!.latitude, curLocation!!.longitude, 1)
+                val addresses =
+                    mGeocoder.getFromLocation(curLocation!!.latitude, curLocation!!.longitude, 1)
                 val address = addresses?.get(0)
                 val sb = StringBuilder()
-                if (address != null) {
-                    for (i in 0 until address.maxAddressLineIndex) {
+                if (address != null)
+                {
+                    for (i in 0 until address.maxAddressLineIndex)
+                    {
                         sb.append(address.getAddressLine(i)).append("\n")
                     }
 
@@ -99,8 +129,10 @@ class RegistrationFragment2 : Fragment() {
                 user?.let { userViewModel.updateUser(it) }
             }
 
-            override fun onLocationStatusUpdated(locationStatus: LocationStatus) {
-                if (locationStatus == LocationStatus.NOT_AVAILABLE) {
+            override fun onLocationStatusUpdated(locationStatus: LocationStatus)
+            {
+                if (locationStatus == LocationStatus.NOT_AVAILABLE)
+                {
                     println("Location is not available")
                 }
             }
@@ -130,59 +162,62 @@ class RegistrationFragment2 : Fragment() {
         checkLocationPermission()
     }
 
-    override fun onStart() {
+    override fun onStart()
+    {
         super.onStart()
         MapKitFactory.getInstance().onStart()
         mapView.onStart()
-        if (hasLocationPermission()) {
+        if (hasLocationPermission())
+        {
             subscribeToLocationUpdate()
         }
     }
 
-    override fun onStop() {
+    override fun onStop()
+    {
         super.onStop()
         MapKitFactory.getInstance().onStop()
         locationManager.unsubscribe(locationListener)
         mapView.onStop()
     }
 
-    private fun checkLocationPermission() {
-        if (!hasLocationPermission()) {
+    private fun checkLocationPermission()
+    {
+        if (!hasLocationPermission())
+        {
             requestLocationPermission()
         }
     }
 
-    private fun hasLocationPermission(): Boolean {
+    private fun hasLocationPermission(): Boolean
+    {
         return ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
+    private fun requestLocationPermission()
+    {
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                subscribeToLocationUpdate()
-            } else {
-                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
-            }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted)
+        {
+            subscribeToLocationUpdate()
+        }
+        else
+        {
+            Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
-    private fun subscribeToLocationUpdate() {
+    private fun subscribeToLocationUpdate()
+    {
         locationManager.subscribeForLocationUpdates(
             DESIRED_ACCURACY,
             MINIMAL_TIME,
@@ -194,11 +229,53 @@ class RegistrationFragment2 : Fragment() {
         )
     }
 
-    private fun moveCamera(point: Point, zoom: Float) {
+    private fun moveCamera(point: Point, zoom: Float)
+    {
         mapView.mapWindow.map.move(
             CameraPosition(point, zoom, 0.0f, 0.0f),
             Animation(Animation.Type.SMOOTH, 1F),
             null
         )
+    }
+
+    private fun setMarkerInCurLocation()
+    {
+        val image =
+            ImageProvider.fromResource(requireContext(), R.mipmap.location).image
+                .scale(
+                    ImageProvider.fromResource(requireContext(), R.mipmap.location).image.width / 4,
+                    ImageProvider.fromResource(requireContext(), R.mipmap.location).image.height / 4)
+        val marker = R.mipmap.location // Добавляем ссылку на картинку
+        mapObjectCollection =
+            binding.mapview.map.mapObjects // Инициализируем коллекцию различных объектов на карте
+        mapObjectCollection.clear() // Очищаем коллекцию от предыдущих объектов
+        placemarkMapObject = mapObjectCollection.addPlacemark(
+            curLocation!!,
+            ImageProvider.fromBitmap(image)
+        ) // Добавляем метку со значком
+    }
+
+    override fun onCameraPositionChanged(
+        map: Map,
+        cameraPosition: CameraPosition,
+        cameraUpdateReason: CameraUpdateReason,
+        finished: Boolean
+    ) {
+        val image =
+            ImageProvider.fromResource(requireContext(), R.mipmap.location).image
+                .scale(
+                    ImageProvider.fromResource(requireContext(), R.mipmap.location).image.width / 4,
+                    ImageProvider.fromResource(requireContext(), R.mipmap.location).image.height / 4)
+        if (finished) { // Если камера закончила движение
+            when {
+                cameraPosition.zoom >= COMFORTABLE_ZOOM_LEVEL && zoomValue <= COMFORTABLE_ZOOM_LEVEL -> {
+                    placemarkMapObject.setIcon(ImageProvider.fromBitmap(image))
+                }
+                cameraPosition.zoom <= COMFORTABLE_ZOOM_LEVEL && zoomValue >= COMFORTABLE_ZOOM_LEVEL -> {
+                    placemarkMapObject.setIcon(ImageProvider.fromBitmap(image))
+                }
+            }
+            zoomValue = cameraPosition.zoom // После изменения позиции камеры сохраняем величину зума
+        }
     }
 }

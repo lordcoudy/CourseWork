@@ -1,11 +1,45 @@
 package com.milord.coursework.data
 
-import android.location.Address
+import com.google.gson.annotations.SerializedName
+
+data class UserHelper(
+    @SerializedName("id")
+    var id : Int,
+    @SerializedName("email")
+    var email: String,
+    @SerializedName("password")
+    var password: String,
+    @SerializedName("address")
+    var address: String,
+    @SerializedName("payer_code")
+    var INN: String
+)
+
+data class LoginRequest (
+    @SerializedName("email")
+    var email: String,
+
+    @SerializedName("password")
+    var password: String
+)
+
+data class LoginResponse (
+    @SerializedName("status_code")
+    var statusCode: Int,
+
+    @SerializedName("access_token")
+    var authToken: String,
+
+    @SerializedName("user")
+    var user: UserHelper
+)
 
 class UserData (private var email: String, private var password: String)
 {
+    private var userInfo : UserHelper = UserHelper(0, email, password, "", "")
     private var address: String = ""
     private var INN: String = ""
+    private var id : Int = 0
     private var balance : BalanceData = BalanceData()
     private var dates: PaymentsDates = PaymentsDates()
 
@@ -13,6 +47,8 @@ class UserData (private var email: String, private var password: String)
     {
         this.INN = INN
         this.address = address
+        userInfo.INN = INN
+        userInfo.address = address
     }
 
     fun getEmail(): String
@@ -33,6 +69,7 @@ class UserData (private var email: String, private var password: String)
     fun setEmail(email: String)
     {
         this.email = email
+        userInfo.email = email
     }
 
     fun setPassword(password: String)
@@ -48,11 +85,13 @@ class UserData (private var email: String, private var password: String)
     fun setAddress(address: String)
     {
         this.address = address
+        userInfo.address = address
     }
 
     fun setINN(INN: String)
     {
         this.INN = INN
+        userInfo.INN = INN
     }
 
     fun getBalance(): BalanceData

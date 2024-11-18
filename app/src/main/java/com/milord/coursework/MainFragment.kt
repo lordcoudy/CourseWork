@@ -58,13 +58,13 @@ class MainFragment : Fragment() {
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
             INN.text = user?.getINN()
-            balanceButton.text = user!!.getBalance().balance.toString()
-            electricityText.text = user!!.getBalance().electricity.toString()
-            coldWaterText.text = user!!.getBalance().coldWater.toString()
-            hotWaterText.text = user!!.getBalance().hotWater.toString()
-            electricityDate.text = user!!.getDates().electricityDate.toString()
-            coldWaterDate.text = user!!.getDates().coldWaterDate.toString()
-            hotWaterDate.text = user!!.getDates().hotWaterDate.toString()
+            balanceButton.text = "Баланс: " + user!!.getBalance().balance.toString()
+            electricityText.text = "Электроэнергия: " + user!!.getBalance().electricity.toString()
+            coldWaterText.text = "ХВС: " + user!!.getBalance().coldWater.toString()
+            hotWaterText.text = "ГВС: " + user!!.getBalance().hotWater.toString()
+            electricityDate.text = "Крайний срок ввода показаний: " + user!!.getDates().electricityDate.toString()
+            coldWaterDate.text = "Крайний срок ввода показаний: " + user!!.getDates().coldWaterDate.toString()
+            hotWaterDate.text ="Крайний срок ввода показаний: " + user!!.getDates().hotWaterDate.toString()
             if (user!!.getBalance().balance < userData.getBalance().cap)
             {
                 notification.visibility = View.VISIBLE
@@ -111,25 +111,26 @@ class MainFragment : Fragment() {
         {
             Data.Electricity ->
             {
-                user!!.getBalance().electricity = binding.electricityText.text.toString().toDouble()
+                user!!.getBalance().electricity = binding.electricityText.text.toString().subSequence(15, binding.electricityText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
             Data.ColdWater ->
             {
-                user!!.getBalance().coldWater = binding.coldWaterText.text.toString().toDouble()
+                user!!.getBalance().coldWater = binding.coldWaterText.text.toString().subSequence(5, binding.coldWaterText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
             Data.HotWater ->
             {
-                user!!.getBalance().hotWater = binding.hotWaterText.text.toString().toDouble()
+                user!!.getBalance().hotWater = binding.hotWaterText.text.toString().subSequence(5, binding.hotWaterText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
             Data.Balance ->
             {
-                user!!.getBalance().balance = binding.balanceButton.text.toString().toDouble()
+
+                user!!.getBalance().balance = binding.balanceButton.text.toString().subSequence(8, binding.balanceButton.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
         }

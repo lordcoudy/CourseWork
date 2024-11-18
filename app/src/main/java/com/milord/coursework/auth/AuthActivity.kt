@@ -10,13 +10,20 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.milord.coursework.MainActivity
+import com.milord.coursework.data.ApiClient
 import com.milord.coursework.data.BalanceData
 import com.milord.coursework.data.InfoLoader
+import com.milord.coursework.data.LoginRequest
+import com.milord.coursework.data.LoginResponse
 import com.milord.coursework.data.PaymentsDates
+import com.milord.coursework.data.SessionManager
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityAuthBinding
 import com.milord.coursework.utils.SaveSharedPreference
 import com.milord.coursework.utils.UserViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AuthActivity : AppCompatActivity()
 {
@@ -29,6 +36,8 @@ class AuthActivity : AppCompatActivity()
 
     private lateinit var binding: ActivityAuthBinding
     private val userViewModel = UserViewModel.getInstance()
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiClient: ApiClient
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -74,8 +83,9 @@ class AuthActivity : AppCompatActivity()
         }
 
         buttonLogin.setOnClickListener {
-            // TODO: check if the user exists in the database
-            // TODO: load user data from the database
+            apiClient = ApiClient()
+            sessionManager = SessionManager(this)
+            var logged = false
             val infoLoader = InfoLoader()
             infoLoader.loadData(editTextEmail.text.toString(), editTextPassword.text.toString())
             user = infoLoader.getData()
