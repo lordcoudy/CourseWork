@@ -1,4 +1,4 @@
-package com.milord.coursework
+package com.milord.coursework.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.milord.coursework.data.Payment
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentHistoryBinding
-import com.milord.coursework.utils.PaymentAdapter
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.utils.payments.PaymentAdapter
+import com.milord.coursework.data.UserViewModel
 
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
             android:gravity="center"
-            android:text="Дата"
+            android:text="@string/date"
             android:textSize="20sp"
             android:textStyle="bold"/>
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
             android:gravity="center"
-            android:text="Сумма"
+            android:text="@string/sum"
             android:textSize="20sp"
             android:textStyle="bold"/>
 

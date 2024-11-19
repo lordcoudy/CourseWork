@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.R
 import com.milord.coursework.auth.AuthActivity
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentRegistration1Binding
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 
 
 class RegistrationFragment1 : Fragment()

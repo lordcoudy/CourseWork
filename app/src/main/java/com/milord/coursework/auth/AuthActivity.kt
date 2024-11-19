@@ -7,14 +7,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.milord.coursework.MainActivity
-import com.milord.coursework.data.ApiClient
-import com.milord.coursework.data.InfoLoader
-import com.milord.coursework.data.SessionManager
+import com.milord.coursework.R
+import com.milord.coursework.main.MainActivity
+import com.milord.coursework.utils.api.ApiClient
+import com.milord.coursework.utils.InfoLoader
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityAuthBinding
-import com.milord.coursework.utils.SaveSharedPreference
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.prefs.SaveSharedPreference
+import com.milord.coursework.data.UserViewModel
 
 class AuthActivity : AppCompatActivity()
 {
@@ -26,7 +26,6 @@ class AuthActivity : AppCompatActivity()
 
     private lateinit var binding: ActivityAuthBinding
     private val userViewModel = UserViewModel.getInstance()
-    private lateinit var sessionManager: SessionManager
     private lateinit var apiClient: ApiClient
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -65,17 +64,17 @@ class AuthActivity : AppCompatActivity()
 
         buttonLogin.setOnClickListener {
             apiClient = ApiClient()
-            sessionManager = SessionManager(this)
             var logged = false
             val infoLoader = InfoLoader()   // Временная заглушка
             if (!isValidEmail(editTextEmail.text.toString()))
             {
-                Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!isValidPassword(editTextPassword.text.toString()))
             {
-                Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    getString(R.string.password_must_be_at_least_6_characters_long), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             infoLoader.loadData(editTextEmail.text.toString(), editTextPassword.text.toString())
@@ -87,12 +86,13 @@ class AuthActivity : AppCompatActivity()
         buttonRegister.setOnClickListener {
             if (!isValidEmail(editTextEmail.text.toString()))
             {
-                Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (!isValidPassword(editTextPassword.text.toString()))
             {
-                Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,
+                    getString(R.string.password_must_be_at_least_6_characters_long), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             user = UserData(editTextEmail.text.toString(), editTextPassword.text.toString())
@@ -106,17 +106,14 @@ class AuthActivity : AppCompatActivity()
     private fun updateUser()
     {
         userViewModel.updateUser(user!!)
-        SaveSharedPreference().setEmail(this, user!!.getEmail())
-        SaveSharedPreference().setPassword(this, user!!.getPassword())
-        SaveSharedPreference().setToken(this, user!!.getToken())
+        SaveSharedPreference(this).setEmail(user!!.getEmail())
+        SaveSharedPreference(this).setPassword(user!!.getPassword())
+        SaveSharedPreference(this).setToken(user!!.getToken())
     }
 
     private fun logInUser()
     {
-        val pref = getSharedPreferences("logIn", Context.MODE_PRIVATE)
-        val editor = pref.edit()
-        editor.putBoolean("isLoggedIn", true)
-        editor.apply()
+        SaveSharedPreference(this).setLogIn(true)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

@@ -23,7 +23,7 @@
             android:layout_margin="10sp"
             android:gravity="center"
             android:padding="10sp"
-            android:text="Введите своё ФИО"
+            android:text="@string/fio"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="Фамилия"
+            android:hint="@string/surname"
             android:inputType="textPersonName"
             android:textSize="20sp" />
 
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="Имя"
+            android:hint="@string/name"
             android:inputType="textPersonName"
             android:textSize="20sp" />
 
@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:hint="Отчество (при наличии)"
+            android:hint="@string/middle_name"
             android:inputType="textPersonName"
             android:textSize="20sp" />
 
@@ -112,7 +112,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="10sp"
                 android:layout_weight="1"
-                android:text="Назад"
+                android:text="@string/back"
                 android:textSize="20sp" />
 
             <Button
@@ -122,7 +122,7 @@
                 android:layout_height="match_parent"
                 android:layout_margin="10sp"
                 android:layout_weight="1"
-                android:text="Далее"
+                android:text="@string/next"
                 android:textSize="20sp" />
 
         </LinearLayout>

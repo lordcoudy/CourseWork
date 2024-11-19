@@ -9,16 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.scale
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.milord.coursework.MainActivity
 import com.milord.coursework.R
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentRegistration2Binding
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -37,8 +35,6 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import java.util.Locale
-import kotlin.math.ceil
-import kotlin.math.floor
 
 class RegistrationFragment2 : Fragment(), CameraListener
 {
@@ -102,7 +98,6 @@ class RegistrationFragment2 : Fragment(), CameraListener
                 setMarkerInCurLocation()
                 val mGeocoder = Geocoder(requireContext(), Locale.getDefault())
                 var addressString = ""
-                // Reverse-Geocoding starts
                 val addresses =
                     mGeocoder.getFromLocation(curLocation!!.latitude, curLocation!!.longitude, 1)
                 val address = addresses?.get(0)
@@ -133,7 +128,7 @@ class RegistrationFragment2 : Fragment(), CameraListener
             {
                 if (locationStatus == LocationStatus.NOT_AVAILABLE)
                 {
-                    println("Location is not available")
+                    println(getString(R.string.location_is_not_available))
                 }
             }
         }
@@ -211,7 +206,8 @@ class RegistrationFragment2 : Fragment(), CameraListener
         }
         else
         {
-            Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT)
+            Toast.makeText(requireContext(),
+                getString(R.string.location_permission_denied), Toast.LENGTH_SHORT)
                 .show()
         }
     }
@@ -245,14 +241,13 @@ class RegistrationFragment2 : Fragment(), CameraListener
                 .scale(
                     ImageProvider.fromResource(requireContext(), R.mipmap.location).image.width / 4,
                     ImageProvider.fromResource(requireContext(), R.mipmap.location).image.height / 4)
-        val marker = R.mipmap.location // Добавляем ссылку на картинку
         mapObjectCollection =
-            binding.mapview.map.mapObjects // Инициализируем коллекцию различных объектов на карте
-        mapObjectCollection.clear() // Очищаем коллекцию от предыдущих объектов
+            binding.mapview.map.mapObjects
+        mapObjectCollection.clear()
         placemarkMapObject = mapObjectCollection.addPlacemark(
             curLocation!!,
             ImageProvider.fromBitmap(image)
-        ) // Добавляем метку со значком
+        )
     }
 
     override fun onCameraPositionChanged(
@@ -266,7 +261,7 @@ class RegistrationFragment2 : Fragment(), CameraListener
                 .scale(
                     ImageProvider.fromResource(requireContext(), R.mipmap.location).image.width / 4,
                     ImageProvider.fromResource(requireContext(), R.mipmap.location).image.height / 4)
-        if (finished) { // Если камера закончила движение
+        if (finished) {
             when {
                 cameraPosition.zoom >= COMFORTABLE_ZOOM_LEVEL && zoomValue <= COMFORTABLE_ZOOM_LEVEL -> {
                     placemarkMapObject.setIcon(ImageProvider.fromBitmap(image))
@@ -275,7 +270,7 @@ class RegistrationFragment2 : Fragment(), CameraListener
                     placemarkMapObject.setIcon(ImageProvider.fromBitmap(image))
                 }
             }
-            zoomValue = cameraPosition.zoom // После изменения позиции камеры сохраняем величину зума
+            zoomValue = cameraPosition.zoom
         }
     }
 }

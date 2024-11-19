@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.milord.coursework.MainFragment"
+        android:name="com.milord.coursework.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main">
         <action
@@ -16,17 +16,17 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_history"
-        android:name="com.milord.coursework.HistoryFragment"
+        android:name="com.milord.coursework.main.HistoryFragment"
         android:label="HistoryFragment"
         tools:layout="@layout/fragment_history"/>
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.milord.coursework.SettingsFragment"
+        android:name="com.milord.coursework.main.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings"/>
     <fragment
         android:id="@+id/paymentFragment"
-        android:name="com.milord.coursework.PaymentFragment"
+        android:name="com.milord.coursework.main.PaymentFragment"
         android:label="fragment_payment"
         tools:layout="@layout/fragment_payment" >
         <action

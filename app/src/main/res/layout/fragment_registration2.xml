@@ -22,7 +22,7 @@
             android:layout_margin="10sp"
             android:gravity="center"
             android:padding="10sp"
-            android:text="Укажите свой адрес"
+            android:text="@string/address_input"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="Введите адрес"
+        android:hint="@string/enter_address"
         android:id="@+id/editTextAddress"
         android:layout_margin="10sp"
         android:padding="10sp"
@@ -80,7 +80,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="10sp"
-                android:text="Назад"
+                android:text="@string/back"
                 android:textSize="20sp" />
 
             <Button
@@ -90,7 +90,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="10sp"
-                android:text="Далее"
+                android:text="@string/next"
                 android:textSize="20sp" />
 
         </LinearLayout>

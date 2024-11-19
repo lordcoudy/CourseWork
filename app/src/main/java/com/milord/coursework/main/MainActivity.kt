@@ -1,16 +1,15 @@
-package com.milord.coursework
+package com.milord.coursework.main
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.milord.coursework.R
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityMainBinding
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,5 +1,12 @@
-package com.milord.coursework.data
+package com.milord.coursework.utils.api
 
+import com.milord.coursework.data.BalanceData
+import com.milord.coursework.data.LoginRequest
+import com.milord.coursework.data.LoginResponse
+import com.milord.coursework.data.PaymentsDates
+import com.milord.coursework.data.RegisterRequest
+import com.milord.coursework.data.RegisterResponse
+import com.milord.coursework.data.UserHelper
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,15 +22,13 @@ object Constants {
     const val BALANCE_URL = "user/balance"
     const val DATES_URL = "user/dates"
     const val BASE_URL = "http://127.0.0.1:8000/api/"
-
 }
 
 class ApiClient {
     private lateinit var apiService: ApiInterface
 
-    fun getApiService(): ApiInterface {
-
-        // Initialize ApiService if not initialized yet
+    fun getApiService(): ApiInterface
+    {
         if (!::apiService.isInitialized) {
             val retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
@@ -32,27 +37,6 @@ class ApiClient {
 
             apiService = retrofit.create(ApiInterface::class.java)
         }
-
         return apiService
     }
-
-}
-
-interface ApiInterface {
-    @GET(Constants.USER_URL)
-    fun getUser(): Call<UserHelper>
-
-    @POST(Constants.LOGIN_URL)
-    @FormUrlEncoded
-    fun login(@Body request: LoginRequest): Call<LoginResponse>
-
-    @POST(Constants.REGISTER_URL)
-    @FormUrlEncoded
-    fun register(@Body request: RegisterRequest): Call<RegisterResponse>
-
-    @GET(Constants.BALANCE_URL)
-    fun getBalance(): Call<BalanceData>
-
-    @GET(Constants.DATES_URL)
-    fun getDates(): Call<PaymentsDates>
 }

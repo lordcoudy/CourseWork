@@ -1,4 +1,4 @@
-package com.milord.coursework
+package com.milord.coursework.main
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.milord.coursework.R
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentMainBinding
 import com.milord.coursework.utils.NotificationDialogFragment
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 
 enum class Data
 {
@@ -58,13 +57,34 @@ class MainFragment : Fragment() {
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
             INN.text = user?.getINN()
-            balanceButton.text = "Баланс: " + user!!.getBalance().balance.toString()
-            electricityText.text = "Электроэнергия: " + user!!.getBalance().electricity.toString()
-            coldWaterText.text = "ХВС: " + user!!.getBalance().coldWater.toString()
-            hotWaterText.text = "ГВС: " + user!!.getBalance().hotWater.toString()
-            electricityDate.text = "Крайний срок ввода показаний: " + user!!.getDates().electricityDate.toString()
-            coldWaterDate.text = "Крайний срок ввода показаний: " + user!!.getDates().coldWaterDate.toString()
-            hotWaterDate.text ="Крайний срок ввода показаний: " + user!!.getDates().hotWaterDate.toString()
+            balanceButton.text = buildString {
+                append(getString(R.string.balance))
+                append(user!!.getBalance().balance.toString())
+            }
+            electricityText.text = buildString {
+                append(getString(R.string.electricity))
+                append(user!!.getBalance().electricity.toString())
+            }
+            coldWaterText.text = buildString {
+                append(getString(R.string.cold_water))
+                append(user!!.getBalance().coldWater.toString())
+            }
+            hotWaterText.text = buildString {
+                append(getString(R.string.hot_water))
+                append(user!!.getBalance().hotWater.toString())
+            }
+            electricityDate.text = buildString {
+                append(getString(R.string.deadline))
+                append(user!!.getDates().electricityDate.toString())
+            }
+            coldWaterDate.text = buildString {
+                append(getString(R.string.deadline))
+                append(user!!.getDates().coldWaterDate.toString())
+            }
+            hotWaterDate.text = buildString {
+                append(getString(R.string.deadline))
+                append(user!!.getDates().hotWaterDate.toString())
+            }
             if (user!!.getBalance().balance < userData.getBalance().cap)
             {
                 showNotificationDialog()

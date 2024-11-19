@@ -1,9 +1,7 @@
-package com.milord.coursework.utils
+package com.milord.coursework.utils.payments
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.milord.coursework.R
 import com.milord.coursework.data.Payment
@@ -25,10 +23,4 @@ class PaymentAdapter (private val payments: List<Payment>) : RecyclerView.Adapte
         holder.date.text = currentPayment.date
         holder.sum.text = currentPayment.sum
     }
-}
-
-class PaymentViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
-{
-    val date : TextView = itemView.findViewById(R.id.paymentItemDate)
-    val sum : TextView = itemView.findViewById(R.id.paymentItemSum)
 }

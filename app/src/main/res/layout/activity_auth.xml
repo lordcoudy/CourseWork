@@ -92,14 +92,14 @@
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/confidentialPolicy"
+                        android:text="@string/confidential_policy"
                         android:id="@+id/checkBoxConditions"
                         />
 
                     <CheckBox
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/dataProcessingPolicy"
+                        android:text="@string/data_processing_policy"
                         android:id="@+id/checkBoxData"
                         />
 
@@ -127,13 +127,13 @@
                         android:layout_margin="10sp"
                         android:layout_weight="1"
                         android:enabled="false"
-                        android:text="@string/registrationButton" />
+                        android:text="@string/registration_button" />
 
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/loginButton"
+                        android:text="@string/login_button"
                         android:id="@+id/buttonLogin"
                         android:layout_margin="10sp"
                         android:enabled="false"

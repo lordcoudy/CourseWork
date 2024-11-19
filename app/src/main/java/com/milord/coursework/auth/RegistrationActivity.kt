@@ -1,24 +1,16 @@
 package com.milord.coursework.auth
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.milord.coursework.MainActivity
 import com.milord.coursework.R
-import com.milord.coursework.auth.registration.RegistrationFragment1
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityRegistrationBinding
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 
 class RegistrationActivity : AppCompatActivity()
 {

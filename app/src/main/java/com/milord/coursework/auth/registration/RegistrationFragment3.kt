@@ -7,19 +7,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.milord.coursework.MainActivity
+import com.milord.coursework.main.MainActivity
 import com.milord.coursework.R
-import com.milord.coursework.auth.AuthActivity
-import com.milord.coursework.data.ApiClient
-import com.milord.coursework.data.InfoLoader
-import com.milord.coursework.data.SessionManager
+import com.milord.coursework.utils.api.ApiClient
+import com.milord.coursework.utils.InfoLoader
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentRegistration3Binding
-import com.milord.coursework.utils.SaveSharedPreference
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.prefs.SaveSharedPreference
+import com.milord.coursework.data.UserViewModel
 
 
 class RegistrationFragment3 : Fragment()
@@ -27,7 +23,6 @@ class RegistrationFragment3 : Fragment()
     private lateinit var binding: FragmentRegistration3Binding
     private val userViewModel = UserViewModel.getInstance()
     private var user : UserData? = null
-    private lateinit var sessionManager: SessionManager
     private lateinit var apiClient: ApiClient
 
     override fun onCreateView(
@@ -59,16 +54,12 @@ class RegistrationFragment3 : Fragment()
             }
             else
             {
-                INNEt.error = "INN is required"
+                INNEt.error = getString(R.string.inn_is_required)
                 return@setOnClickListener
             }
             apiClient = ApiClient()
-            sessionManager = SessionManager(requireContext())
-            SaveSharedPreference().setToken(requireContext(), user!!.getToken())
-            val pref = requireActivity().getSharedPreferences("logIn", Context.MODE_PRIVATE)
-            val editor = pref.edit()
-            editor.putBoolean("isLoggedIn", true)
-            editor.apply()
+            SaveSharedPreference(requireContext()).setToken(user!!.getToken())
+            SaveSharedPreference(requireContext()).setLogIn(true)
             requireActivity().startActivityFromFragment(this, Intent(requireActivity(), MainActivity::class.java), 0)
             requireActivity().finish()
         }

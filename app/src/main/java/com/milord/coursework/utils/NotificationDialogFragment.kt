@@ -12,10 +12,10 @@ class NotificationDialogFragment : DialogFragment()
     {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-            builder.setTitle("Недостаточно средств на балансе!")
-                .setMessage("Для оплаты задолженности ЖКХ не хватает средств на счёте! Пополните счёт в ближайшее время.")
+            builder.setTitle(getString(R.string.not_enough_money))
+                .setMessage(getString(R.string.please_pay))
                 .setIcon(R.mipmap.exclamation)
-                .setPositiveButton("ОК") {
+                .setPositiveButton(getString(R.string.ok)) {
                         dialog, id ->  dialog.cancel()
                 }
             builder.create()

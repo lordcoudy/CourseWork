@@ -1,5 +1,10 @@
-package com.milord.coursework.data
+package com.milord.coursework.utils
 
+import com.milord.coursework.data.BalanceData
+import com.milord.coursework.data.PaymentsDates
+import com.milord.coursework.data.UserData
+
+// Класс-заглушка для загрузки данных о пользователе
 class InfoLoader
 {
     private lateinit var data: UserData
@@ -8,7 +13,6 @@ class InfoLoader
 
     fun loadData(mail : String, password: String)
     {
-        // TODO: connection and loading
         data = UserData(mail, password, "0000000000", "Moscow", "Ivan Ivanov")
         balanceData = BalanceData(balance = 90.0, electricity = 100.0, coldWater = 100.0, hotWater = 100.0, cap = 100.0)
         data.setBalance(balanceData)

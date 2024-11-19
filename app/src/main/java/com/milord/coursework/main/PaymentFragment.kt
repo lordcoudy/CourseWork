@@ -1,19 +1,17 @@
-package com.milord.coursework
+package com.milord.coursework.main
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.milord.coursework.data.BalanceData
+import com.milord.coursework.R
 import com.milord.coursework.data.Payment
 import com.milord.coursework.data.UserData
 import com.milord.coursework.data.currentDate
 import com.milord.coursework.databinding.FragmentPaymentBinding
-import com.milord.coursework.utils.UserViewModel
+import com.milord.coursework.data.UserViewModel
 
 class PaymentFragment : Fragment()
 {

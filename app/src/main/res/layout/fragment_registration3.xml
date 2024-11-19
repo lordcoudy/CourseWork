@@ -22,7 +22,7 @@
             android:layout_margin="10sp"
             android:gravity="center"
             android:padding="10sp"
-            android:text="Введите код налогоплательщика"
+            android:text="@string/enter_payer_code"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -41,7 +41,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Введите код налогоплательщика"
+            android:hint="@string/enter_payer_code"
             android:id="@+id/editTextINN"
             android:inputType="number"
             android:layout_margin="10sp"
@@ -76,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="10sp"
-                android:text="Назад"
+                android:text="@string/back"
                 android:textSize="20sp" />
 
             <Button
@@ -86,7 +86,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_margin="10sp"
-                android:text="Далее"
+                android:text="@string/next"
                 android:textSize="20sp" />
 
         </LinearLayout>
