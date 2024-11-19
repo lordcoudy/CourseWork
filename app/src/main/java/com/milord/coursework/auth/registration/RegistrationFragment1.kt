@@ -36,51 +36,21 @@ class RegistrationFragment1 : Fragment()
         super.onViewCreated(view, savedInstanceState)
         val buttonNext = binding.nextButton
         val buttonBack = binding.backButton
-        val radioGroup = binding.radioGroup
+        val surname = binding.editTextTextPersonSurname
+        val name = binding.editTextTextPersonName
+        val middleName = binding.editTextTextPersonMiddlename
         user = userViewModel.userData.value
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId)
-            {
-                R.id.radioButton1 ->
-                {
-                    user?.setAddress("Moscow")
-                    user?.let { userViewModel.updateUser(it) }
-                    binding.radioButton2.isChecked = false
-                    binding.radioButton3.isChecked = false
-                    binding.moscowView.visibility = View.VISIBLE
-                    binding.spbView.visibility = View.GONE
-                    binding.kazanView.visibility = View.GONE
-                }
-
-                R.id.radioButton2 ->
-                {
-                    user?.setAddress("Saint-Petersburg")
-                    user?.let { userViewModel.updateUser(it) }
-                    binding.radioButton1.isChecked = false
-                    binding.radioButton3.isChecked = false
-                    binding.moscowView.visibility = View.GONE
-                    binding.spbView.visibility = View.VISIBLE
-                    binding.kazanView.visibility = View.GONE
-                }
-
-                R.id.radioButton3 ->
-                {
-                    user?.setAddress("Kazan")
-                    user?.let { userViewModel.updateUser(it) }
-                    binding.radioButton1.isChecked = false
-                    binding.radioButton2.isChecked = false
-                    binding.moscowView.visibility = View.GONE
-                    binding.spbView.visibility = View.GONE
-                    binding.kazanView.visibility = View.VISIBLE
-                }
-            }
-        }
 
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
         }
 
         buttonNext.setOnClickListener {
+            if (name.text.toString().isNotEmpty() && surname.text.toString().isNotEmpty())
+            {
+                val fullName = "${surname.text} ${name.text} ${middleName.text}"
+                user?.setName(fullName)
+            }
             user?.let { it1 -> userViewModel.updateUser(it1) }
             findNavController().navigate(R.id.action_registrationFragment1_to_registrationFragment2)
         }

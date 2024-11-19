@@ -4,26 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.milord.coursework.MainActivity
 import com.milord.coursework.data.ApiClient
-import com.milord.coursework.data.BalanceData
 import com.milord.coursework.data.InfoLoader
-import com.milord.coursework.data.LoginRequest
-import com.milord.coursework.data.LoginResponse
-import com.milord.coursework.data.PaymentsDates
 import com.milord.coursework.data.SessionManager
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityAuthBinding
 import com.milord.coursework.utils.SaveSharedPreference
 import com.milord.coursework.utils.UserViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class AuthActivity : AppCompatActivity()
 {
@@ -86,27 +77,48 @@ class AuthActivity : AppCompatActivity()
             apiClient = ApiClient()
             sessionManager = SessionManager(this)
             var logged = false
-            val infoLoader = InfoLoader()
+            val infoLoader = InfoLoader()   // Временная заглушка
+            if (!isValidEmail(editTextEmail.text.toString()))
+            {
+                Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (!isValidPassword(editTextPassword.text.toString()))
+            {
+                Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             infoLoader.loadData(editTextEmail.text.toString(), editTextPassword.text.toString())
             user = infoLoader.getData()
-            userViewModel.updateUser(user!!)
+            updateUser()
             logInUser()
         }
 
         buttonRegister.setOnClickListener {
-            if (editTextPassword.length() < 6)
+            if (!isValidEmail(editTextEmail.text.toString()))
+            {
+                Toast.makeText(this, "Invalid email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (!isValidPassword(editTextPassword.text.toString()))
             {
                 Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             user = UserData(editTextEmail.text.toString(), editTextPassword.text.toString())
-            userViewModel.updateUser(user!!)
-            SaveSharedPreference().setUserName(this, user!!.getEmail())
-            SaveSharedPreference().setPassword(this, user!!.getPassword())
+            updateUser()
             startActivity(Intent(this, RegistrationActivity::class.java))
             finish()
         }
 
+    }
+
+    private fun updateUser()
+    {
+        userViewModel.updateUser(user!!)
+        SaveSharedPreference().setEmail(this, user!!.getEmail())
+        SaveSharedPreference().setPassword(this, user!!.getPassword())
+        SaveSharedPreference().setToken(this, user!!.getToken())
     }
 
     private fun logInUser()
@@ -115,9 +127,17 @@ class AuthActivity : AppCompatActivity()
         val editor = pref.edit()
         editor.putBoolean("isLoggedIn", true)
         editor.apply()
-        SaveSharedPreference().setUserName(this, user!!.getEmail())
-        SaveSharedPreference().setPassword(this, user!!.getPassword())
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    private fun isValidEmail(email: String): Boolean
+    {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun isValidPassword(password: String): Boolean
+    {
+        return password.length >= 6
     }
 }

@@ -23,7 +23,7 @@
             android:layout_margin="10sp"
             android:gravity="center"
             android:padding="10sp"
-            android:text="Выберите свой город"
+            android:text="Введите своё ФИО"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -31,93 +31,65 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="10sp"
         app:cardCornerRadius="15sp"
         app:cardElevation="10sp">
 
-        <ImageView
-            android:id="@+id/moscowView"
+        <EditText
+            android:id="@+id/editTextTextPersonSurname"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
+            android:layout_height="wrap_content"
             android:layout_margin="10sp"
-            android:contentDescription="https://www.flaticon.com/free-icons/moscow"
-            android:padding="10sp"
-            android:scaleType="fitCenter"
-            android:src="@mipmap/moscow"
-            android:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/spbView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:layout_margin="10sp"
-            android:contentDescription="https://www.flaticon.com/free-icons/saint-petersburg"
-            android:padding="10sp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/spb"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/kazanView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:layout_margin="10sp"
-            android:contentDescription="https://www.flaticon.com/free-icons/mosque"
-            android:padding="10sp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/kazan"
-            android:visibility="gone" />
+            android:hint="Фамилия"
+            android:inputType="textPersonName"
+            android:textSize="20sp" />
 
     </androidx.cardview.widget.CardView>
-
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="10sp"
-        app:cardCornerRadius="15sp">
+        app:cardCornerRadius="15sp"
+        app:cardElevation="10sp">
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
+        <EditText
+            android:id="@+id/editTextTextPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:checkedButton="@id/radioButton1"
-            android:orientation="vertical">
+            android:layout_margin="10sp"
+            android:hint="Имя"
+            android:inputType="textPersonName"
+            android:textSize="20sp" />
 
-
-                <RadioButton
-                    android:id="@+id/radioButton1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Москва"
-                    android:textSize="18sp" />
-
-
-                <RadioButton
-                    android:id="@+id/radioButton2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Санкт-Петербург"
-                    android:textSize="18sp" />
-
-
-                <RadioButton
-                    android:id="@+id/radioButton3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Казань"
-                    android:textSize="18sp" />
-
-        </RadioGroup>
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10sp"
+        app:cardCornerRadius="15sp"
+        app:cardElevation="10sp">
+
+        <EditText
+            android:id="@+id/editTextTextPersonMiddlename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:hint="Отчество (при наличии)"
+            android:inputType="textPersonName"
+            android:textSize="20sp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

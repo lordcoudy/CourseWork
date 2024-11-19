@@ -67,6 +67,7 @@ class MainFragment : Fragment() {
             hotWaterDate.text ="Крайний срок ввода показаний: " + user!!.getDates().hotWaterDate.toString()
             if (user!!.getBalance().balance < userData.getBalance().cap)
             {
+                showNotificationDialog()
                 notification.visibility = View.VISIBLE
             }
         }
@@ -95,11 +96,7 @@ class MainFragment : Fragment() {
 
         notification.setOnClickListener()
         {
-            val myDialogFragment = NotificationDialogFragment()
-            val manager = requireActivity().supportFragmentManager
-            //myDialogFragment.show(manager, "dialog")
-            val transaction: FragmentTransaction = manager.beginTransaction()
-            myDialogFragment.show(transaction, "dialog")
+            showNotificationDialog()
         }
 
     }
@@ -129,10 +126,18 @@ class MainFragment : Fragment() {
 
             Data.Balance ->
             {
-
                 user!!.getBalance().balance = binding.balanceButton.text.toString().subSequence(8, binding.balanceButton.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
         }
+    }
+
+    private fun showNotificationDialog()
+    {
+        val myDialogFragment = NotificationDialogFragment()
+        val manager = requireActivity().supportFragmentManager
+        //myDialogFragment.show(manager, "dialog")
+        val transaction: FragmentTransaction = manager.beginTransaction()
+        myDialogFragment.show(transaction, "dialog")
     }
 }

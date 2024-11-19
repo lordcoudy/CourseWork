@@ -15,7 +15,7 @@ class SaveSharedPreference
         return PreferenceManager.getDefaultSharedPreferences(ctx)
     }
 
-    fun setUserName(ctx: Context?, userName: String?)
+    fun setEmail(ctx: Context?, userName: String?)
     {
         val editor = getSharedPreferences(ctx).edit()
         editor.putString(PREF_USER_NAME, userName)
@@ -29,6 +29,13 @@ class SaveSharedPreference
         editor.commit()
     }
 
+    fun setToken(ctx: Context?, token: String?)
+    {
+        val editor = getSharedPreferences(ctx).edit()
+        editor.putString("token", token)
+        editor.commit()
+    }
+
     fun getUserName(ctx: Context?): String?
     {
         return getSharedPreferences(ctx).getString(PREF_USER_NAME, "")
@@ -37,5 +44,10 @@ class SaveSharedPreference
     fun getPassword(ctx: Context?): String?
     {
         return getSharedPreferences(ctx).getString(PREF_PASSWORD, "")
+    }
+
+    fun getToken(ctx: Context?): String?
+    {
+        return getSharedPreferences(ctx).getString("token", "")
     }
 }

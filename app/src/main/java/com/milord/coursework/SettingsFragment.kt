@@ -37,7 +37,7 @@ class SettingsFragment : Fragment() {
         user = userViewModel.userData.value
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
-            accountTw.text = user?.getEmail()
+            accountTw.text = user?.getName()
         }
 
         changeAcc.setOnClickListener {

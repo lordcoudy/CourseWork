@@ -13,9 +13,12 @@ import androidx.navigation.fragment.findNavController
 import com.milord.coursework.MainActivity
 import com.milord.coursework.R
 import com.milord.coursework.auth.AuthActivity
+import com.milord.coursework.data.ApiClient
 import com.milord.coursework.data.InfoLoader
+import com.milord.coursework.data.SessionManager
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentRegistration3Binding
+import com.milord.coursework.utils.SaveSharedPreference
 import com.milord.coursework.utils.UserViewModel
 
 
@@ -24,6 +27,8 @@ class RegistrationFragment3 : Fragment()
     private lateinit var binding: FragmentRegistration3Binding
     private val userViewModel = UserViewModel.getInstance()
     private var user : UserData? = null
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiClient: ApiClient
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +62,9 @@ class RegistrationFragment3 : Fragment()
                 INNEt.error = "INN is required"
                 return@setOnClickListener
             }
+            apiClient = ApiClient()
+            sessionManager = SessionManager(requireContext())
+            SaveSharedPreference().setToken(requireContext(), user!!.getToken())
             val pref = requireActivity().getSharedPreferences("logIn", Context.MODE_PRIVATE)
             val editor = pref.edit()
             editor.putBoolean("isLoggedIn", true)

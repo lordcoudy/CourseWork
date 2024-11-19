@@ -12,6 +12,8 @@ object Constants {
     const val LOGIN_URL = "login"
     const val REGISTER_URL = "register"
     const val USER_URL = "user"
+    const val BALANCE_URL = "user/balance"
+    const val DATES_URL = "user/dates"
     const val BASE_URL = "http://127.0.0.1:8000/api/"
 
 }
@@ -43,4 +45,14 @@ interface ApiInterface {
     @POST(Constants.LOGIN_URL)
     @FormUrlEncoded
     fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+    @POST(Constants.REGISTER_URL)
+    @FormUrlEncoded
+    fun register(@Body request: RegisterRequest): Call<RegisterResponse>
+
+    @GET(Constants.BALANCE_URL)
+    fun getBalance(): Call<BalanceData>
+
+    @GET(Constants.DATES_URL)
+    fun getDates(): Call<PaymentsDates>
 }
