@@ -18,10 +18,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Код плательщика"
+            android:textAlignment="center"
             android:textSize="20sp"
-            android:padding="10sp"
             android:textStyle="bold"
-            android:gravity="center" />
+            android:layout_margin="10sp"
+            android:padding="10sp" />
 
     </androidx.cardview.widget.CardView>
 

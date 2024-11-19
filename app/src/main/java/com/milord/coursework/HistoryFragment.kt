@@ -24,16 +24,17 @@ class HistoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHistoryBinding.inflate(layoutInflater)
-        paymentList = ArrayList()
-        paymentAdapter = PaymentAdapter(paymentList)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
+        user = userViewModel.userData.value
         val historyList = binding.historyListView
         val historyButton = binding.updateHistoryButton
+        paymentList = user!!.getPayments()
+        paymentAdapter = PaymentAdapter(paymentList)
 
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
@@ -45,12 +46,12 @@ class HistoryFragment : Fragment() {
         }
 
         historyList.layoutManager = LinearLayoutManager(context)
-        historyList.setHasFixedSize(true)
+        historyList.setHasFixedSize(false)
         historyList.adapter = paymentAdapter
     }
 
     private fun update(newList:ArrayList<Payment>){
         paymentList = newList
-        paymentAdapter.notifyDataSetChanged()
+        paymentAdapter = PaymentAdapter(paymentList)
     }
 }

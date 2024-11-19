@@ -20,7 +20,6 @@ class AuthActivity : AppCompatActivity()
 {
     private var conditions = false
     private var data = false
-    private var notification = false
     private var emailEntered = false
     private var passwordEntered = false
     private var user : UserData? = null
@@ -47,30 +46,21 @@ class AuthActivity : AppCompatActivity()
         val buttonRegister = binding.buttonRegister
         val checkBoxConditions = binding.checkBoxConditions
         val checkBoxData = binding.checkBoxData
-        val checkBoxNotification = binding.checkBoxNotification
 
         checkBoxConditions.setOnClickListener {
             conditions = checkBoxConditions.isChecked
             emailEntered = editTextEmail.text.isNotEmpty()
             passwordEntered = editTextPassword.text.isNotEmpty()
-            buttonLogin.isEnabled = conditions && data && notification && emailEntered && passwordEntered
-            buttonRegister.isEnabled = conditions && data && notification && emailEntered && passwordEntered
+            buttonLogin.isEnabled = conditions && data  && emailEntered && passwordEntered
+            buttonRegister.isEnabled = conditions && data && emailEntered && passwordEntered
         }
 
         checkBoxData.setOnClickListener {
             data = checkBoxData.isChecked
             emailEntered = editTextEmail.text.isNotEmpty()
             passwordEntered = editTextPassword.text.isNotEmpty()
-            buttonLogin.isEnabled = conditions && data && notification && emailEntered && passwordEntered
-            buttonRegister.isEnabled = conditions && data && notification && emailEntered && passwordEntered
-        }
-
-        checkBoxNotification.setOnClickListener {
-            notification = checkBoxNotification.isChecked
-            emailEntered = editTextEmail.text.isNotEmpty()
-            passwordEntered = editTextPassword.text.isNotEmpty()
-            buttonLogin.isEnabled = conditions && data && notification && emailEntered && passwordEntered
-            buttonRegister.isEnabled = conditions && data && notification && emailEntered && passwordEntered
+            buttonLogin.isEnabled = conditions && data && emailEntered && passwordEntered
+            buttonRegister.isEnabled = conditions && data && emailEntered && passwordEntered
         }
 
         buttonLogin.setOnClickListener {
