@@ -3,10 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/cardview_default_elevation"
-    android:paddingTop="@dimen/cardview_default_elevation"
-    android:gravity="top">
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -29,18 +26,26 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/historyListView"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/updateHistoryButton"
-        style="@style/Widget.Material3.FloatingActionButton.Tertiary"
+        android:id="@+id/filterButton"
+        style="@style/Widget.Material3.ExtendedFloatingActionButton.Tertiary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:layout_margin="10sp"
-        android:src="@mipmap/refresh"/>
+        android:layout_gravity="bottom|end"
+        android:src="@mipmap/calendar"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.milord.coursework.main
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ class HistoryFragment : Fragment() {
     private var user : UserData? = null
     private lateinit var paymentList : ArrayList<Payment>
     private lateinit var paymentAdapter : PaymentAdapter
+    private lateinit var historyList : androidx.recyclerview.widget.RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,8 +33,8 @@ class HistoryFragment : Fragment() {
     {
         super.onViewCreated(view, savedInstanceState)
         user = userViewModel.userData.value
-        val historyList = binding.historyListView
-        val historyButton = binding.updateHistoryButton
+        historyList = binding.historyListView
+        val filterButton = binding.filterButton
         paymentList = user!!.getPayments()
         paymentAdapter = PaymentAdapter(paymentList)
 
@@ -41,10 +43,16 @@ class HistoryFragment : Fragment() {
             update(user!!.getPayments())
         }
 
-        historyButton.setOnClickListener {
-            update(user!!.getPayments())
+        filterButton.setOnClickListener {
+            val dialog = DatePickerDialog(requireContext())
+            dialog.show()
+            dialog.setOnDateSetListener { view, year, month, dayOfMonth ->
+                val date = "$dayOfMonth.${month+1}.$year"
+                val filteredList =
+                    user!!.getPayments().filter { it.date == date } as ArrayList<Payment>
+                update(filteredList)
+            }
         }
-
         historyList.layoutManager = LinearLayoutManager(context)
         historyList.setHasFixedSize(false)
         historyList.adapter = paymentAdapter
@@ -53,5 +61,6 @@ class HistoryFragment : Fragment() {
     private fun update(newList:ArrayList<Payment>){
         paymentList = newList
         paymentAdapter = PaymentAdapter(paymentList)
+        historyList.adapter = paymentAdapter
     }
 }

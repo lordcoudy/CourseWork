@@ -44,4 +44,5 @@
     <string name="sum">Сумма</string>
     <string name="home">Главная</string>
     <string name="history">История</string>
+    <string name="date_filter">Отфильтровать по дате</string>
 </resources>

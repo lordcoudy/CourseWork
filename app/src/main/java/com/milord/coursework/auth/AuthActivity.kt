@@ -62,19 +62,19 @@ class AuthActivity : AppCompatActivity()
             buttonRegister.isEnabled = conditions && data && emailEntered && passwordEntered
         }
 
+        // TODO: реализовать вход в аккаунт и регистрацию через API
         buttonLogin.setOnClickListener {
             apiClient = ApiClient()
             var logged = false
             val infoLoader = InfoLoader()   // Временная заглушка
             if (!isValidEmail(editTextEmail.text.toString()))
             {
-                Toast.makeText(this, getString(R.string.invalid_email), Toast.LENGTH_SHORT).show()
+                editTextEmail.error = getString(R.string.invalid_email)
                 return@setOnClickListener
             }
             if (!isValidPassword(editTextPassword.text.toString()))
             {
-                Toast.makeText(this,
-                    getString(R.string.password_must_be_at_least_6_characters_long), Toast.LENGTH_SHORT).show()
+                editTextPassword.error = getString(R.string.password_must_be_at_least_6_characters_long)
                 return@setOnClickListener
             }
             infoLoader.loadData(editTextEmail.text.toString(), editTextPassword.text.toString())

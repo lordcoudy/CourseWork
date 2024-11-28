@@ -56,7 +56,11 @@ class MainFragment : Fragment() {
 
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
-            INN.text = user?.getINN()
+            INN.text = buildString {
+                append(getString(R.string.payer_code))
+                append(": ")
+                append(user?.getINN())
+            }
             balanceButton.text = buildString {
                 append(getString(R.string.balance))
                 append(user!!.getBalance().balance.toString())
