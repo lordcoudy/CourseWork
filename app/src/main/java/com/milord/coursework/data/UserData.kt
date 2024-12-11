@@ -1,76 +1,16 @@
 package com.milord.coursework.data
 
-import com.google.gson.annotations.SerializedName
+import com.milord.coursework.utils.api.UserHelper
 import java.util.ArrayList
 
-data class UserHelper(
-    @SerializedName("id")
-    var id : Int,
-    @SerializedName("name")
-    var name: String,
-    @SerializedName("email")
-    var email: String,
-    @SerializedName("password")
-    var password: String,
-    @SerializedName("address")
-    var address: String,
-    @SerializedName("payer_code")
-    var INN: String
-)
-
-data class LoginRequest (
-    @SerializedName("email")
-    var email: String,
-
-    @SerializedName("password")
-    var password: String
-)
-
-data class RegisterRequest (
-    @SerializedName("name")
-    var name: String,
-
-    @SerializedName("email")
-    var email: String,
-
-    @SerializedName("password")
-    var password: String,
-
-    @SerializedName("address")
-    var address: String,
-
-    @SerializedName("payer_code")
-    var INN: String
-)
-
-data class LoginResponse (
-    @SerializedName("status_code")
-    var statusCode: Int,
-
-    @SerializedName("access_token")
-    var authToken: String,
-
-    @SerializedName("user")
-    var user: UserHelper
-)
-
-data class RegisterResponse (
-    @SerializedName("access_token")
-    var authToken: String,
-
-    @SerializedName("token_type")
-    var tokenType: String
-)
-
-class UserData (private var email: String, private var password: String)
+class UserData (private var email: String)
 {
-    private var userInfo : UserHelper = UserHelper(0, "name", email, password, "", "")
+    private var userInfo : UserHelper = UserHelper(0, "name", email, "", "")
     private var balance : BalanceData = BalanceData()
-    private var dates: PaymentsDates = PaymentsDates()
     private var token : String = ""
     private val payments : ArrayList<Payment> = ArrayList()
 
-    constructor(email: String, password: String, INN: String, address: String, name: String) : this(email, password)
+    constructor(email: String, INN: String, address: String, name: String) : this(email)
     {
         userInfo.name = name
         userInfo.INN = INN
@@ -97,19 +37,9 @@ class UserData (private var email: String, private var password: String)
         return userInfo.INN
     }
 
-    fun getPassword(): String
-    {
-    return userInfo.password
-    }
-
     fun getBalance(): BalanceData
     {
         return balance
-    }
-
-    fun getDates(): PaymentsDates
-    {
-        return dates
     }
 
     fun getToken(): String
@@ -132,11 +62,6 @@ class UserData (private var email: String, private var password: String)
         userInfo.email = email
     }
 
-    fun setPassword(password: String)
-    {
-        this.password = password
-    }
-
     fun setAddress(address: String)
     {
         userInfo.address = address
@@ -152,11 +77,6 @@ class UserData (private var email: String, private var password: String)
         this.balance = balance
     }
 
-    fun setDates(dates: PaymentsDates)
-    {
-        this.dates = dates
-    }
-
     fun setToken(token: String)
     {
         this.token = token
@@ -165,5 +85,11 @@ class UserData (private var email: String, private var password: String)
     fun addPayment(payment: Payment)
     {
         this.payments.add(payment)
+    }
+
+    fun setPayments(payments: ArrayList<Payment>)
+    {
+        this.payments.clear()
+        this.payments.addAll(payments)
     }
 }

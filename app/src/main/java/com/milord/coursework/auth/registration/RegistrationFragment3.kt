@@ -1,21 +1,25 @@
 package com.milord.coursework.auth.registration
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.main.MainActivity
 import com.milord.coursework.R
+import com.milord.coursework.utils.api.AuthResponse
+import com.milord.coursework.utils.api.RegisterRequest
 import com.milord.coursework.utils.api.ApiClient
-import com.milord.coursework.utils.InfoLoader
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentRegistration3Binding
 import com.milord.coursework.data.prefs.SaveSharedPreference
 import com.milord.coursework.data.UserViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class RegistrationFragment3 : Fragment()
@@ -58,19 +62,41 @@ class RegistrationFragment3 : Fragment()
                 return@setOnClickListener
             }
             apiClient = ApiClient()
-            SaveSharedPreference(requireContext()).setToken(user!!.getToken())
-            SaveSharedPreference(requireContext()).setLogIn(true)
-            requireActivity().startActivityFromFragment(this, Intent(requireActivity(), MainActivity::class.java), 0)
-            requireActivity().finish()
+            apiClient.getApiService().register(RegisterRequest(
+                email = user!!.getEmail(), password = SaveSharedPreference(requireContext()).getPassword()!!,
+                passwordConfirmation = SaveSharedPreference(requireContext()).getPassword()!!,
+                name = user!!.getName(), INN = user!!.getINN(), address = user!!.getAddress())
+            ).enqueue(object : Callback<AuthResponse>
+                {
+                    override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        SaveSharedPreference(requireContext()).clearPassword()
+                    }
+
+                    override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                        val registerResponse = response.body()
+
+                        if (registerResponse?.tokenType == "Bearer" && registerResponse.authToken.isNotEmpty()) {
+                            SaveSharedPreference(requireContext()).setToken(registerResponse.authToken)
+                            user?.setToken(registerResponse.authToken)
+                            userViewModel.updateUser(user!!)
+                            SaveSharedPreference(requireContext()).setLogIn(true)
+                            SaveSharedPreference(requireContext()).clearPassword()
+                            requireActivity().startActivityFromFragment(this@RegistrationFragment3, Intent(requireActivity(), MainActivity::class.java), 0)
+                            requireActivity().finish()
+                        } else {
+                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            SaveSharedPreference(requireContext()).clearPassword()
+                        }
+                    }
+                })
+            return@setOnClickListener
         }
 
         buttonBack.setOnClickListener {
             if (INNEt.text.toString().isNotEmpty())
             {
                 user?.setINN(INNEt.text.toString())
-                val infoLoader = InfoLoader()
-                infoLoader.loadData(user!!.getEmail(), user!!.getPassword())
-                user = infoLoader.getData()
                 user?.let { it1 -> userViewModel.updateUser(it1) }
             }
             findNavController().navigate(R.id.action_registrationFragment2_to_registrationFragment3)

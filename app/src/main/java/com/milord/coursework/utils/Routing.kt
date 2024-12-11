@@ -23,12 +23,6 @@ class Routing : AppCompatActivity() {
         splashScreen.setKeepOnScreenCondition { true }
         Handler(Looper.getMainLooper()).postDelayed(2000) {
             val isLoggedIn = SaveSharedPreference(this).getLogIn()
-            if (isLoggedIn) {
-                val user : UserData? = SaveSharedPreference(this).getUserName()
-                    ?.let { SaveSharedPreference(this).getPassword()
-                        ?.let { it1 -> UserData(it, it1) } }
-                user?.let { UserViewModel.getInstance().updateUser(it) }
-            }
             val targetActivity = if (isLoggedIn) MainActivity::class.java else AuthActivity::class.java
             startActivity(Intent(this, targetActivity))
             finish()

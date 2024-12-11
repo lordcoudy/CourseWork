@@ -1,3 +1,10 @@
 package com.milord.coursework.data
 
-data class Payment(val date : String, val sum : String)
+import com.google.gson.annotations.SerializedName
+
+data class Payment(
+    @SerializedName("DateTime")
+    val date: String,
+    @SerializedName("Description")
+    val description: String
+)

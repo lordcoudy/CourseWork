@@ -45,4 +45,7 @@
     <string name="home">Главная</string>
     <string name="history">История</string>
     <string name="date_filter">Отфильтровать по дате</string>
+    <string name="edit_data">Введите показания</string>
+    <string name="enter">Ввод</string>
+    <string name="cancel">Отмена</string>
 </resources>

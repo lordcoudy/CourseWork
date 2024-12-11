@@ -10,32 +10,22 @@ import com.milord.coursework.R
 class SaveSharedPreference (context: Context)
 {
     companion object {
+        const val PREF_LOGIN = "login"
         const val PREF_USER_TOKEN = "access_token"
-        const val PREF_USER_NAME: String = "username"
-        const val PREF_PASSWORD: String = "password"
-        const val PREF_LOGIN: String = "logIn"
+        const val PREF_PASSWORD = ""
     }
     private var prefs: SharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE)
-
-    fun setEmail(userName: String?)
-    {
-        val editor = prefs.edit()
-        editor.putString(PREF_USER_NAME, userName)
-        editor.apply()
-    }
-
-    fun setPassword(password: String?)
-    {
-        val editor = prefs.edit()
-        editor.putString(PREF_PASSWORD, password)
-        editor.apply()
-    }
 
     fun setToken(token: String?)
     {
         val editor = prefs.edit()
         editor.putString(PREF_USER_TOKEN, token)
         editor.apply()
+    }
+
+    fun getToken(): String?
+    {
+        return prefs.getString(PREF_USER_TOKEN, "")
     }
 
     fun setLogIn(logIn: Boolean)
@@ -45,9 +35,16 @@ class SaveSharedPreference (context: Context)
         editor.apply()
     }
 
-    fun getUserName(): String?
+    fun getLogIn(): Boolean
     {
-        return prefs.getString(PREF_USER_NAME, "")
+        return prefs.getBoolean(PREF_LOGIN, false)
+    }
+
+    fun setPassword(password: String)
+    {
+        val editor = prefs.edit()
+        editor.putString(PREF_PASSWORD, password)
+        editor.apply()
     }
 
     fun getPassword(): String?
@@ -55,13 +52,10 @@ class SaveSharedPreference (context: Context)
         return prefs.getString(PREF_PASSWORD, "")
     }
 
-    fun getToken(): String?
+    fun clearPassword()
     {
-        return prefs.getString(PREF_USER_TOKEN, "")
-    }
-
-    fun getLogIn(): Boolean
-    {
-        return prefs.getBoolean(PREF_LOGIN, false)
+        val editor = prefs.edit()
+        editor.remove(PREF_PASSWORD)
+        editor.apply()
     }
 }

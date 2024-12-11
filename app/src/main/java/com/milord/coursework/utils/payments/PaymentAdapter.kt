@@ -21,6 +21,6 @@ class PaymentAdapter (private val payments: List<Payment>) : RecyclerView.Adapte
     {
         val currentPayment = payments[position]
         holder.date.text = currentPayment.date
-        holder.sum.text = currentPayment.sum
+        holder.sum.text = currentPayment.description
     }
 }

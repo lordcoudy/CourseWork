@@ -1,6 +1,5 @@
 package com.milord.coursework.auth
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -8,13 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.milord.coursework.R
+import com.milord.coursework.utils.api.LoginRequest
+import com.milord.coursework.utils.api.AuthResponse
 import com.milord.coursework.main.MainActivity
 import com.milord.coursework.utils.api.ApiClient
-import com.milord.coursework.utils.InfoLoader
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.ActivityAuthBinding
 import com.milord.coursework.data.prefs.SaveSharedPreference
 import com.milord.coursework.data.UserViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AuthActivity : AppCompatActivity()
 {
@@ -62,11 +65,8 @@ class AuthActivity : AppCompatActivity()
             buttonRegister.isEnabled = conditions && data && emailEntered && passwordEntered
         }
 
-        // TODO: реализовать вход в аккаунт и регистрацию через API
         buttonLogin.setOnClickListener {
             apiClient = ApiClient()
-            var logged = false
-            val infoLoader = InfoLoader()   // Временная заглушка
             if (!isValidEmail(editTextEmail.text.toString()))
             {
                 editTextEmail.error = getString(R.string.invalid_email)
@@ -77,10 +77,29 @@ class AuthActivity : AppCompatActivity()
                 editTextPassword.error = getString(R.string.password_must_be_at_least_6_characters_long)
                 return@setOnClickListener
             }
-            infoLoader.loadData(editTextEmail.text.toString(), editTextPassword.text.toString())
-            user = infoLoader.getData()
-            updateUser()
-            logInUser()
+            val loginRequest = LoginRequest(email = editTextEmail.text.toString(), password = editTextPassword.text.toString())
+            apiClient.getApiService().login(loginRequest)
+                .enqueue(object : Callback<AuthResponse>
+                {
+                    override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                        Toast.makeText(this@AuthActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                        val loginResponse = response.body()
+
+                        if (loginResponse?.tokenType == "Bearer" && loginResponse.authToken.isNotEmpty()) {
+                            SaveSharedPreference(this@AuthActivity).setToken(loginResponse.authToken)
+                            user = UserData(editTextEmail.text.toString())
+                            user?.setToken(loginResponse.authToken)
+                            updateUser()
+                            logInUser()
+                        } else {
+                            Toast.makeText(this@AuthActivity, "Email or Password is incorrect", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                })
+            return@setOnClickListener
         }
 
         buttonRegister.setOnClickListener {
@@ -95,8 +114,10 @@ class AuthActivity : AppCompatActivity()
                     getString(R.string.password_must_be_at_least_6_characters_long), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            user = UserData(editTextEmail.text.toString(), editTextPassword.text.toString())
+            user = UserData(editTextEmail.text.toString())
+            SaveSharedPreference(this).setPassword(editTextPassword.text.toString())
             updateUser()
+            userViewModel.updateUser(user!!)
             startActivity(Intent(this, RegistrationActivity::class.java))
             finish()
         }
@@ -105,9 +126,6 @@ class AuthActivity : AppCompatActivity()
 
     private fun updateUser()
     {
-        userViewModel.updateUser(user!!)
-        SaveSharedPreference(this).setEmail(user!!.getEmail())
-        SaveSharedPreference(this).setPassword(user!!.getPassword())
         SaveSharedPreference(this).setToken(user!!.getToken())
     }
 
