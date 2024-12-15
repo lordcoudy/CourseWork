@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.main.MainActivity
 import com.milord.coursework.R
+import com.milord.coursework.auth.AuthActivity
 import com.milord.coursework.utils.api.AuthResponse
 import com.milord.coursework.utils.api.RegisterRequest
 import com.milord.coursework.utils.api.ApiClient
@@ -69,7 +70,8 @@ class RegistrationFragment3 : Fragment()
             ).enqueue(object : Callback<AuthResponse>
                 {
                     override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                         SaveSharedPreference(requireContext()).clearPassword()
                     }
 
@@ -85,8 +87,15 @@ class RegistrationFragment3 : Fragment()
                             requireActivity().startActivityFromFragment(this@RegistrationFragment3, Intent(requireActivity(), MainActivity::class.java), 0)
                             requireActivity().finish()
                         } else {
-                            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,
+                                getString(R.string.registration_error, registerResponse?.message), Toast.LENGTH_SHORT).show()
                             SaveSharedPreference(requireContext()).clearPassword()
+                            requireActivity().startActivityFromFragment(
+                                this@RegistrationFragment3,
+                                Intent(requireActivity(), AuthActivity::class.java),
+                                0
+                            )
+                            requireActivity().finish()
                         }
                     }
                 })

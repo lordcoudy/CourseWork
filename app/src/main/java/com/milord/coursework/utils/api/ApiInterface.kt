@@ -1,11 +1,5 @@
 package com.milord.coursework.utils.api
 
-import com.milord.coursework.data.BalanceData
-import com.milord.coursework.data.Payment
-import com.milord.coursework.utils.api.LoginRequest
-import com.milord.coursework.utils.api.AuthResponse
-import com.milord.coursework.utils.api.RegisterRequest
-import com.milord.coursework.utils.api.UserHelper
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -30,10 +24,10 @@ interface ApiInterface {
     fun getBalance(@Header("Authorization") token: String): Call<BalanceResponse>
 
     @GET(Constants.LAST_READINGS)
-    fun getLastReadings(@Header("Authorization") token: String): Call<ArrayList<StoreReadingsRequest>>
+    fun getLastReadings(@Header("Authorization") token: String): Call<StoreReadingsRequestArr>
 
     @GET(Constants.PAYMENTS)
-    fun getPayments(@Header("Authorization") token: String): Call<ArrayList<Payment>>
+    fun getPayments(@Header("Authorization") token: String): Call<PaymentExt>
 
     @POST(Constants.TOP_UP)
     fun topUp(@Header("Authorization") token: String, @Body request: TopUpRequest): Call<TopUpResponse>

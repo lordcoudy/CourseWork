@@ -10,14 +10,13 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.R
 import com.milord.coursework.auth.AuthActivity
-import com.milord.coursework.data.Payment
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentPaymentBinding
 import com.milord.coursework.data.UserViewModel
 import com.milord.coursework.data.prefs.SaveSharedPreference
 import com.milord.coursework.utils.api.ApiClient
 import com.milord.coursework.utils.api.BalanceResponse
-import com.milord.coursework.utils.api.StoreReadingsResponse
+import com.milord.coursework.utils.api.PaymentExt
 import com.milord.coursework.utils.api.TopUpRequest
 import com.milord.coursework.utils.api.TopUpResponse
 import retrofit2.Call
@@ -74,12 +73,12 @@ class PaymentFragment : Fragment()
     private fun updateBalance()
     {
         apiClient.getApiService()
-            .getBalance(token = "Bearer ${user!!.getToken()}")
+            .getBalance(token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}")
             .enqueue(object : Callback<BalanceResponse>
             {
                 override fun onFailure(call: Call<BalanceResponse>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -89,20 +88,26 @@ class PaymentFragment : Fragment()
                 {
                     val balanceResponse = response.body()
 
-                    if (balanceResponse != null)
+                    if (balanceResponse!!.balance.isNotEmpty())
                     {
                         user = userViewModel.userData.value
-                        val balance = user!!.getBalance()
-                        balance.balance = balanceResponse.balance.toDouble()
+                        val balance = user?.getBalance()
+                        balance?.balance = balanceResponse.balance.toDouble()
                         userViewModel.updateUser(user!!)
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при пополнении",
+                            getString(R.string.balance_error,  balanceResponse.message),
                             Toast.LENGTH_SHORT
                         ).show()
+                        requireActivity().startActivityFromFragment(
+                            this@PaymentFragment,
+                            Intent(requireActivity(), AuthActivity::class.java),
+                            0
+                        )
+                        requireActivity().finish()
                     }
                 }
 
@@ -113,30 +118,30 @@ class PaymentFragment : Fragment()
     {
         apiClient.getApiService()
             .getPayments(token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}")
-            .enqueue(object : Callback<ArrayList<Payment>>
+            .enqueue(object : Callback<PaymentExt>
             {
-                override fun onFailure(call: Call<ArrayList<Payment>>, t: Throwable)
+                override fun onFailure(call: Call<PaymentExt>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
-                    call: Call<ArrayList<Payment>>,
-                    response: Response<ArrayList<Payment>>
+                    call: Call<PaymentExt>,
+                    response: Response<PaymentExt>
                 )
                 {
                     val payments = response.body()
 
                     if (payments != null)
                     {
-                        user!!.setPayments(payments)
+                        user!!.setPayments(payments.payments)
                         userViewModel.updateUser(user!!)
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при загрузке пользователя",
+                            R.string.payments_loading_error,
                             Toast.LENGTH_SHORT
                         ).show()
                         findNavController().navigate(R.id.action_paymentFragment_to_navigation_home)
@@ -146,7 +151,7 @@ class PaymentFragment : Fragment()
             })
     }
 
-    fun topUp(amount : Double)
+    private fun topUp(amount : Double)
     {
         apiClient.getApiService()
             .topUp(
@@ -157,7 +162,7 @@ class PaymentFragment : Fragment()
             {
                 override fun onFailure(call: Call<TopUpResponse>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -167,15 +172,16 @@ class PaymentFragment : Fragment()
                 {
                     val topUpResponse = response.body()
 
-                    if (topUpResponse?.status == null)
+                    if (topUpResponse?.message == null)
                     {
-                        Toast.makeText(context, "Платёж успешный!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,
+                            getString(R.string.successful_payment), Toast.LENGTH_SHORT).show()
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при платеже: ${topUpResponse.status}",
+                            getString(R.string.payment_error, topUpResponse.message),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

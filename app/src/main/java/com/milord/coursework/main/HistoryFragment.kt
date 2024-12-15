@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.milord.coursework.data.Payment
 import com.milord.coursework.data.UserData
 import com.milord.coursework.databinding.FragmentHistoryBinding
 import com.milord.coursework.utils.payments.PaymentAdapter
 import com.milord.coursework.data.UserViewModel
+import com.milord.coursework.utils.api.Payment
 
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
@@ -46,7 +46,7 @@ class HistoryFragment : Fragment() {
         filterButton.setOnClickListener {
             val dialog = DatePickerDialog(requireContext())
             dialog.show()
-            dialog.setOnDateSetListener { view, year, month, dayOfMonth ->
+            dialog.setOnDateSetListener { _, year, month, dayOfMonth ->
                 val date = "$dayOfMonth.${month+1}.$year"
                 val filteredList =
                     user!!.getPayments().filter { it.date == date } as ArrayList<Payment>

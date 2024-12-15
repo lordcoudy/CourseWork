@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.milord.coursework.R
 import com.milord.coursework.auth.AuthActivity
-import com.milord.coursework.data.Payment
 import com.milord.coursework.data.UserData
 import com.milord.coursework.data.UserViewModel
 import com.milord.coursework.data.prefs.SaveSharedPreference
@@ -22,24 +21,15 @@ import com.milord.coursework.databinding.FragmentMainBinding
 import com.milord.coursework.utils.NotificationDialogFragment
 import com.milord.coursework.utils.api.ApiClient
 import com.milord.coursework.utils.api.BalanceResponse
+import com.milord.coursework.utils.api.PaymentExt
 import com.milord.coursework.utils.api.ReadingType
-import com.milord.coursework.utils.api.StoreReadingsRequest
+import com.milord.coursework.utils.api.StoreReadingsRequestArr
 import com.milord.coursework.utils.api.StoreReadingsResponse
 import com.milord.coursework.utils.api.UserHelper
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-enum class Data
-{
-    Electricity,
-    ColdWater,
-    HotWater,
-    HouseHeating,
-    Maintenance,
-    Balance
-}
 
 class MainFragment : Fragment()
 {
@@ -62,18 +52,20 @@ class MainFragment : Fragment()
         super.onViewCreated(view, savedInstanceState)
 
         apiClient = ApiClient()
-
-        user = userViewModel.userData.value
+        user = UserData("", "", "", "")
         updateAll()
-        user = userViewModel.userData.value
 
         val balanceButton = binding.balanceButton
         val electricityText = binding.electricityText
         val coldWaterText = binding.coldWaterText
         val hotWaterText = binding.hotWaterText
+        val houseHeatingText = binding.houseHeatingText
+        val maintenanceText = binding.maintenanceText
         val electricityButton = binding.editElectricityButton
         val coldWaterButton = binding.editColdWaterButton
         val hotWaterButton = binding.editHotWaterButton
+        val houseHeatingButton = binding.editHouseHeatingButton
+        val maintenanceButton = binding.editMaintenanceButton
         val balanceUpdate = binding.refreshBalanceButton
         val notification = binding.BalanceIcon
         val INN = binding.INNTw
@@ -100,7 +92,7 @@ class MainFragment : Fragment()
                     {
                         val storeReadingsResponse = response.body()
 
-                        if (storeReadingsResponse?.status == null)
+                        if (storeReadingsResponse?.message == null)
                         {
                             Toast.makeText(context, "Данные переданы!", Toast.LENGTH_SHORT).show()
                             binding.updateAllButton.visibility = View.GONE
@@ -109,7 +101,7 @@ class MainFragment : Fragment()
                         {
                             Toast.makeText(
                                 context,
-                                "Ошибка при передаче данных: ${storeReadingsResponse.status}",
+                                "Ошибка при передаче данных: ${storeReadingsResponse.message}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -142,6 +134,14 @@ class MainFragment : Fragment()
                 append(getString(R.string.hot_water))
                 append(user!!.getBalance().hotWater.toString())
             }
+            houseHeatingText.text = buildString {
+                append(getString(R.string.heating))
+                append(user!!.getBalance().houseHeating.toString())
+            }
+            maintenanceText.text = buildString {
+                append(getString(R.string.maintenance))
+                append(user!!.getBalance().maintenance.toString())
+            }
             if (user!!.getBalance().balance < userData.getBalance().cap)
             {
                 showNotificationDialog()
@@ -159,19 +159,19 @@ class MainFragment : Fragment()
             alertDialog.setView(edittext)
 
             alertDialog.setPositiveButton(
-                getString(R.string.enter),
-                DialogInterface.OnClickListener { dialog, whichButton -> //What ever you want to do with the value
-                    val balance = user?.getBalance()
-                    balance!!.electricity = edittext.text.toString().toDouble()
-                    user?.setBalance(balance)
-                    setData(Data.Electricity)
-                    loadData(Data.Electricity)
-                })
+                getString(R.string.enter)
+            ) { _, _ -> //What ever you want to do with the value
+                val balance = user?.getBalance()
+                balance!!.electricity = edittext.text.toString().toDouble()
+                user?.setBalance(balance)
+                setData(ReadingType.ELECTRICITY)
+                loadData(ReadingType.ELECTRICITY)
+            }
 
             alertDialog.setNegativeButton(
-                getString(R.string.cancel),
-                DialogInterface.OnClickListener { dialog, whichButton ->
-                })
+                getString(R.string.cancel)
+            ) { _, _ ->
+            }
 
             alertDialog.show()
         }
@@ -185,20 +185,19 @@ class MainFragment : Fragment()
             alertDialog.setView(edittext)
 
             alertDialog.setPositiveButton(
-                getString(R.string.enter),
-                DialogInterface.OnClickListener { dialog, whichButton -> //What ever you want to do with the value
-                    val balance = user?.getBalance()
-                    balance!!.coldWater = edittext.text.toString().toDouble()
-                    user?.setBalance(balance)
-                    setData(Data.ColdWater)
-                    loadData(Data.ColdWater)
-                })
+                getString(R.string.enter)
+            ) { _, _ -> //What ever you want to do with the value
+                val balance = user?.getBalance()
+                balance!!.coldWater = edittext.text.toString().toDouble()
+                user?.setBalance(balance)
+                setData(ReadingType.COLD_WATER)
+                loadData(ReadingType.COLD_WATER)
+            }
 
             alertDialog.setNegativeButton(
-                getString(R.string.cancel),
-                DialogInterface.OnClickListener { dialog, whichButton ->
-                    // what ever you want to do with No option.
-                })
+                getString(R.string.cancel)
+            ) { _, _ ->
+            }
 
             alertDialog.show()
         }
@@ -212,14 +211,66 @@ class MainFragment : Fragment()
             alertDialog.setView(edittext)
 
             alertDialog.setPositiveButton(
-                getString(R.string.enter),
-                DialogInterface.OnClickListener { dialog, whichButton -> //What ever you want to do with the value
-                    val balance = user?.getBalance()
-                    balance!!.hotWater = edittext.text.toString().toDouble()
-                    user?.setBalance(balance)
-                    setData(Data.HotWater)
-                    loadData(Data.HotWater)
-                })
+                getString(R.string.enter)
+            ) { _, _ -> //What ever you want to do with the value
+                val balance = user?.getBalance()
+                balance!!.hotWater = edittext.text.toString().toDouble()
+                user?.setBalance(balance)
+                setData(ReadingType.HOT_WATER)
+                loadData(ReadingType.HOT_WATER)
+            }
+
+            alertDialog.setNegativeButton(
+                getString(R.string.cancel)
+            ) { _, _ ->
+            }
+
+            alertDialog.show()
+        }
+        houseHeatingButton.setOnClickListener()
+        {
+            val alertDialog = AlertDialog.Builder(context)
+            val edittext = EditText(context)
+            alertDialog.setMessage(getString(R.string.edit_data))
+            alertDialog.setTitle(getString(R.string.heating))
+
+            alertDialog.setView(edittext)
+
+            alertDialog.setPositiveButton(
+                getString(R.string.enter)
+            ) { _, _ -> //What ever you want to do with the value
+                val balance = user?.getBalance()
+                balance!!.houseHeating = edittext.text.toString().toDouble()
+                user?.setBalance(balance)
+                setData(ReadingType.HOUSE_HEATING)
+                loadData(ReadingType.HOUSE_HEATING)
+            }
+
+            alertDialog.setNegativeButton(
+                getString(R.string.cancel)
+            ) { _, _ ->
+            }
+
+            alertDialog.show()
+        }
+        maintenanceButton.setOnClickListener()
+        {
+            val alertDialog = AlertDialog.Builder(context)
+            val edittext = EditText(context)
+            alertDialog.setMessage(getString(R.string.edit_data))
+            alertDialog.setTitle(getString(R.string.maintenance))
+
+            alertDialog.setView(edittext)
+
+            alertDialog.setPositiveButton(
+                getString(R.string.enter)
+            ) { _, _ -> //What ever you want to do with the value
+                val balance = user?.getBalance()
+                balance!!.maintenance = edittext.text.toString().toDouble()
+                user?.setBalance(balance)
+                setData(ReadingType.MAINTENANCE)
+                loadData(ReadingType.MAINTENANCE)
+            }
 
             alertDialog.setNegativeButton(
                 getString(R.string.cancel),
@@ -231,19 +282,20 @@ class MainFragment : Fragment()
         }
         balanceUpdate.setOnClickListener()
         {
-            loadData(Data.Balance)
+            updateAll()
+            binding.balanceButton.text = buildString {
+                append(getString(R.string.balance))
+                append(user!!.getBalance().balance.toString())
+            }
         }
-
         balanceButton.setOnClickListener()
         {
             findNavController().navigate(R.id.action_navigation_home_to_paymentFragment)
         }
-
         notification.setOnClickListener()
         {
             showNotificationDialog()
         }
-
     }
 
     private fun updateBalance()
@@ -254,7 +306,7 @@ class MainFragment : Fragment()
             {
                 override fun onFailure(call: Call<BalanceResponse>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -264,18 +316,18 @@ class MainFragment : Fragment()
                 {
                     val balanceResponse = response.body()
 
-                    if (balanceResponse != null)
+                    if (balanceResponse!!.balance.isNotEmpty())
                     {
-                        user = userViewModel.userData.value
-                        val balance = user?.getBalance()
-                        balance?.balance = balanceResponse.balance.toDouble()
+                        val balance = user!!.getBalance()
+                        balance.balance = balanceResponse.balance.toDouble()
+                        user!!.setBalance(balance)
                         userViewModel.updateUser(user!!)
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при загрузке пользователя",
+                            getString(R.string.balance_error, balanceResponse.message),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -294,29 +346,32 @@ class MainFragment : Fragment()
     {
         apiClient.getApiService()
             .getLastReadings(token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}")
-            .enqueue(object : Callback<ArrayList<StoreReadingsRequest>>
+            .enqueue(object : Callback<StoreReadingsRequestArr>
             {
-                override fun onFailure(call: Call<ArrayList<StoreReadingsRequest>>, t: Throwable)
+                override fun onFailure(call: Call<StoreReadingsRequestArr>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
-                    call: Call<ArrayList<StoreReadingsRequest>>,
-                    response: Response<ArrayList<StoreReadingsRequest>>
+                    call: Call<StoreReadingsRequestArr>,
+                    response: Response<StoreReadingsRequestArr>
                 )
                 {
                     val readingsResponse = response.body()
 
                     if (readingsResponse != null)
                     {
-                        user = userViewModel.userData.value
                         val balance = user!!.getBalance()
-                        for (reading in readingsResponse)
+                        for (reading in readingsResponse.readings)
                         {
                             when (reading.type)
                             {
-                                ReadingType.UNKNOWN.ordinal -> TODO()
+                                ReadingType.UNKNOWN.ordinal -> Toast.makeText(
+                                    context,
+                                    getString(R.string.unknown_type),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 ReadingType.ELECTRICITY.ordinal -> balance.electricity = reading.value
                                 ReadingType.COLD_WATER.ordinal -> balance.coldWater = reading.value
                                 ReadingType.HOT_WATER.ordinal -> balance.hotWater = reading.value
@@ -330,7 +385,7 @@ class MainFragment : Fragment()
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при загрузке пользователя",
+                            getString(R.string.data_loading_error),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -349,31 +404,30 @@ class MainFragment : Fragment()
     {
         apiClient.getApiService()
             .getPayments(token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}")
-            .enqueue(object : Callback<ArrayList<Payment>>
+            .enqueue(object : Callback<PaymentExt>
             {
-                override fun onFailure(call: Call<ArrayList<Payment>>, t: Throwable)
+                override fun onFailure(call: Call<PaymentExt>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
-                    call: Call<ArrayList<Payment>>,
-                    response: Response<ArrayList<Payment>>
+                    call: Call<PaymentExt>,
+                    response: Response<PaymentExt>
                 )
                 {
                     val payments = response.body()
 
                     if (payments != null)
                     {
-                        user = userViewModel.userData.value
-                        user?.setPayments(payments)
+                        user?.setPayments(payments.payments)
                         userViewModel.updateUser(user!!)
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при загрузке пользователя",
+                            getString(R.string.payments_loading_error),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -396,7 +450,7 @@ class MainFragment : Fragment()
             {
                 override fun onFailure(call: Call<UserHelper>, t: Throwable)
                 {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -406,22 +460,19 @@ class MainFragment : Fragment()
                 {
                     val userHelper = response.body()
 
-                    if (userHelper != null)
+                    if (userHelper!!.email.isNotEmpty())
                     {
-                        user = userViewModel.userData.value
-                        user = UserData(
-                            userHelper.email,
-                            userHelper.INN,
-                            userHelper.address,
-                            userHelper.name
-                        )
+                        user!!.setName(userHelper.name)
+                        user!!.setINN(userHelper.INN)
+                        user!!.setAddress(userHelper.address)
+                        user!!.setEmail(userHelper.email)
                         userViewModel.updateUser(user!!)
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            "Ошибка при загрузке пользователя",
+                            getString(R.string.user_loading_error, userHelper.message),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -441,13 +492,14 @@ class MainFragment : Fragment()
         updateBalance()
         updateReadings()
         updatePayments()
+        user = userViewModel.userData.value
     }
 
-    private fun setData(data : Data)
+    private fun setData(data : ReadingType)
     {
         when (data)
         {
-            Data.Electricity ->
+            ReadingType.ELECTRICITY ->
             {
                 binding.electricityText.text = buildString {
                     append(getString(R.string.electricity))
@@ -455,7 +507,7 @@ class MainFragment : Fragment()
                 }
             }
 
-            Data.ColdWater ->
+            ReadingType.COLD_WATER ->
             {
                 binding.coldWaterText.text = buildString {
                     append(getString(R.string.cold_water))
@@ -463,7 +515,7 @@ class MainFragment : Fragment()
                 }
             }
 
-            Data.HotWater ->
+            ReadingType.HOT_WATER ->
             {
                 binding.hotWaterText.text = buildString {
                     append(getString(R.string.hot_water))
@@ -471,56 +523,64 @@ class MainFragment : Fragment()
                 }
             }
 
-            Data.Balance ->
+            ReadingType.HOUSE_HEATING ->
             {
-                binding.balanceButton.text = buildString {
-                    append(getString(R.string.balance))
-                    append(user!!.getBalance().balance.toString())
+                binding.houseHeatingText.text = buildString {
+                    append(getString(R.string.heating))
+                    append(user!!.getBalance().houseHeating.toString())
                 }
             }
-
-            Data.HouseHeating ->
+            ReadingType.MAINTENANCE ->
             {
-                TODO()
+                binding.maintenanceText.text = buildString {
+                    append(getString(R.string.maintenance))
+                    append(user!!.getBalance().maintenance.toString())
+                }
             }
-            Data.Maintenance ->
+            ReadingType.UNKNOWN ->
             {
-                TODO()
+                Toast.makeText(context, getString(R.string.unknown_type), Toast.LENGTH_SHORT).show()
             }
         }
         binding.updateAllButton.visibility = View.VISIBLE
     }
 
-    private fun loadData(data : Data)
+    private fun loadData(data : ReadingType)
     {
         when (data)
         {
-            Data.Electricity ->
+            ReadingType.ELECTRICITY ->
             {
-                user?.getBalance()?.electricity = binding.electricityText.text.toString().subSequence(15, binding.electricityText.text.length).toString().toDouble()
+                user?.getBalance()?.electricity = binding.electricityText.text.toString().subSequence(getString(R.string.electricity).length, binding.electricityText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
-            Data.ColdWater ->
+            ReadingType.COLD_WATER ->
             {
-                user?.getBalance()?.coldWater = binding.coldWaterText.text.toString().subSequence(5, binding.coldWaterText.text.length).toString().toDouble()
+                user?.getBalance()?.coldWater = binding.coldWaterText.text.toString().subSequence(getString(R.string.cold_water).length, binding.coldWaterText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
-            Data.HotWater ->
+            ReadingType.HOT_WATER ->
             {
-                user?.getBalance()?.hotWater = binding.hotWaterText.text.toString().subSequence(5, binding.hotWaterText.text.length).toString().toDouble()
+                user?.getBalance()?.hotWater = binding.hotWaterText.text.toString().subSequence(getString(R.string.hot_water).length, binding.hotWaterText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
 
-            Data.Balance ->
+            ReadingType.HOUSE_HEATING ->
             {
-                user?.getBalance()?.balance = binding.balanceButton.text.toString().subSequence(8, binding.balanceButton.text.length).toString().toDouble()
+                user?.getBalance()?.houseHeating = binding.houseHeatingText.text.toString().subSequence(getString(R.string.heating).length, binding.houseHeatingText.text.length).toString().toDouble()
                 userViewModel.updateUser(user!!)
             }
-
-            Data.HouseHeating -> TODO()
-            Data.Maintenance -> TODO()
+            ReadingType.MAINTENANCE ->
+            {
+                user?.getBalance()?.maintenance = binding.maintenanceText.text.toString().subSequence(getString(R.string.maintenance).length, binding.maintenanceText.text.length).toString().toDouble()
+                userViewModel.updateUser(user!!)
+            }
+            ReadingType.UNKNOWN ->
+            {
+                Toast.makeText(context, getString(R.string.unknown_type), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

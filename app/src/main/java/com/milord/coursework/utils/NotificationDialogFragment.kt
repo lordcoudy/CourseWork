@@ -16,7 +16,7 @@ class NotificationDialogFragment : DialogFragment()
                 .setMessage(getString(R.string.please_pay))
                 .setIcon(R.mipmap.exclamation)
                 .setPositiveButton(getString(R.string.ok)) {
-                        dialog, id ->  dialog.cancel()
+                        dialog, _ ->  dialog.cancel()
                 }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

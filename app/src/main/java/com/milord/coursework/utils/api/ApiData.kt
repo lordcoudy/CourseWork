@@ -12,6 +12,8 @@ enum class ReadingType {
 }
 
 data class UserHelper(
+    @SerializedName("message")
+    var message: String,
     @SerializedName("id")
     var id : Int,
     @SerializedName("name")
@@ -27,7 +29,6 @@ data class UserHelper(
 data class LoginRequest (
     @SerializedName("email")
     var email: String,
-
     @SerializedName("password")
     var password: String
 )
@@ -35,27 +36,23 @@ data class LoginRequest (
 data class RegisterRequest (
     @SerializedName("name")
     var name: String,
-
     @SerializedName("email")
     var email: String,
-
     @SerializedName("password")
     var password: String,
-
     @SerializedName("password_confirmation")
     var passwordConfirmation: String,
-
     @SerializedName("address")
     var address: String,
-
     @SerializedName("payer_code")
     var INN: String
 )
 
 data class AuthResponse (
+    @SerializedName("message")
+    var message: String,
     @SerializedName("access_token")
     var authToken: String,
-
     @SerializedName("token_type")
     var tokenType: String
 )
@@ -67,13 +64,20 @@ data class StoreReadingsRequest(
     var value: Double
 )
 
+data class StoreReadingsRequestArr(
+    @SerializedName("value")
+    var readings: ArrayList<StoreReadingsRequest>
+)
+
 data class StoreReadingsResponse (
     @SerializedName("message")
-    var status: String
+    var message: String
 )
 
 data class BalanceResponse (
-    @SerializedName("")
+    @SerializedName("message")
+    var message: String,
+    @SerializedName("value")
     var balance: String
 )
 
@@ -84,5 +88,17 @@ data class TopUpRequest (
 
 data class TopUpResponse (
     @SerializedName("message")
-    var status: String
+    var message: String
+)
+
+data class Payment(
+    @SerializedName("DateTime")
+    val date: String,
+    @SerializedName("Description")
+    val description: String
+)
+
+data class PaymentExt(
+    @SerializedName("value")
+    var payments : ArrayList<Payment>
 )

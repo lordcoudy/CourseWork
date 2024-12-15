@@ -15,8 +15,6 @@ import com.milord.coursework.data.UserViewModel
 class RegistrationActivity : AppCompatActivity()
 {
     private lateinit var binding: ActivityRegistrationBinding
-    private val userViewModel = UserViewModel.getInstance()
-    private var user : UserData? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?)

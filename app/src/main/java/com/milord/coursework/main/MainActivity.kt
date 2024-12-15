@@ -14,8 +14,6 @@ import com.milord.coursework.data.UserViewModel
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val userViewModel = UserViewModel.getInstance()
-    private var user : UserData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

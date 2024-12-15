@@ -82,7 +82,7 @@ class AuthActivity : AppCompatActivity()
                 .enqueue(object : Callback<AuthResponse>
                 {
                     override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                        Toast.makeText(this@AuthActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AuthActivity, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
@@ -95,7 +95,8 @@ class AuthActivity : AppCompatActivity()
                             updateUser()
                             logInUser()
                         } else {
-                            Toast.makeText(this@AuthActivity, "Email or Password is incorrect", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@AuthActivity,
+                                getString(R.string.email_or_pwd_wrong, loginResponse?.message), Toast.LENGTH_SHORT).show()
                         }
                     }
                 })
@@ -121,7 +122,6 @@ class AuthActivity : AppCompatActivity()
             startActivity(Intent(this, RegistrationActivity::class.java))
             finish()
         }
-
     }
 
     private fun updateUser()

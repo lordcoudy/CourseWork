@@ -1,11 +1,12 @@
 package com.milord.coursework.data
 
+import com.milord.coursework.utils.api.Payment
 import com.milord.coursework.utils.api.UserHelper
 import java.util.ArrayList
 
-class UserData (private var email: String)
+class UserData (email: String)
 {
-    private var userInfo : UserHelper = UserHelper(0, "name", email, "", "")
+    private var userInfo : UserHelper = UserHelper("",0, "name", email, "", "")
     private var balance : BalanceData = BalanceData()
     private var token : String = ""
     private val payments : ArrayList<Payment> = ArrayList()
@@ -80,11 +81,6 @@ class UserData (private var email: String)
     fun setToken(token: String)
     {
         this.token = token
-    }
-
-    fun addPayment(payment: Payment)
-    {
-        this.payments.add(payment)
     }
 
     fun setPayments(payments: ArrayList<Payment>)
