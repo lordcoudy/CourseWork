@@ -17,7 +17,7 @@ import com.milord.coursework.data.prefs.SaveSharedPreference
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     private val userViewModel = UserViewModel.getInstance()
-    private var user : UserData? = null
+    private var user : UserData = UserData()
 
     companion object {
         const val TELEGRAM = "https://t.me/MyMilord"
@@ -39,13 +39,13 @@ class SettingsFragment : Fragment() {
         val accountTw = binding.accountText
         val supportButton = binding.supportButton
 
-        user = userViewModel.userData.value
+        user = userViewModel.userData.value!!
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
             accountTw.text = buildString {
-                append(user?.getName())
+                append(user.getName())
                 append("\n")
-                append(user?.getEmail())
+                append(user.getEmail())
             }
         }
 

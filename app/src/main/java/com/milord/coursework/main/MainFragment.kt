@@ -21,10 +21,9 @@ import com.milord.coursework.databinding.FragmentMainBinding
 import com.milord.coursework.utils.NotificationDialogFragment
 import com.milord.coursework.utils.api.ApiClient
 import com.milord.coursework.utils.api.BalanceResponse
+import com.milord.coursework.utils.api.GetReadingsRequestArr
 import com.milord.coursework.utils.api.PaymentExt
 import com.milord.coursework.utils.api.ReadingType
-import com.milord.coursework.utils.api.StoreReadingsRequestArr
-import com.milord.coursework.utils.api.StoreReadingsResponse
 import com.milord.coursework.utils.api.UserHelper
 import retrofit2.Call
 import retrofit2.Callback
@@ -78,37 +77,35 @@ class MainFragment : Fragment()
                     token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}",
                     user!!.getBalance().getReadings()
                 )
-                .enqueue(object : Callback<StoreReadingsResponse>
+                .enqueue(object : Callback<Void>
                 {
-                    override fun onFailure(call: Call<StoreReadingsResponse>, t: Throwable)
+                    override fun onFailure(call: Call<Void>, t: Throwable)
                     {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(
-                        call: Call<StoreReadingsResponse>,
-                        response: Response<StoreReadingsResponse>
+                        call: Call<Void>,
+                        response: Response<Void>
                     )
                     {
-                        val storeReadingsResponse = response.body()
-
-                        if (storeReadingsResponse?.message == null)
+                        if (response.code() == 200)
                         {
-                            Toast.makeText(context, "Данные переданы!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,
+                                getString(R.string.data_sent), Toast.LENGTH_SHORT).show()
                             binding.updateAllButton.visibility = View.GONE
+                            updateBalance()
                         }
                         else
                         {
                             Toast.makeText(
                                 context,
-                                "Ошибка при передаче данных: ${storeReadingsResponse.message}",
+                                getString(R.string.data_sending_error, response.message()),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     }
                 })
-            updateReadings()
-            updateBalance()
         }
 
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
@@ -142,7 +139,7 @@ class MainFragment : Fragment()
                 append(getString(R.string.maintenance))
                 append(user!!.getBalance().maintenance.toString())
             }
-            if (user!!.getBalance().balance < userData.getBalance().cap)
+            if (user!!.getBalance().balance < userData!!.getBalance().cap && notification.visibility == View.GONE)
             {
                 showNotificationDialog()
                 notification.visibility = View.VISIBLE
@@ -274,7 +271,7 @@ class MainFragment : Fragment()
 
             alertDialog.setNegativeButton(
                 getString(R.string.cancel),
-                DialogInterface.OnClickListener { dialog, whichButton ->
+                DialogInterface.OnClickListener { _, _ ->
                     // what ever you want to do with No option.
                 })
 
@@ -283,9 +280,22 @@ class MainFragment : Fragment()
         balanceUpdate.setOnClickListener()
         {
             updateAll()
-            binding.balanceButton.text = buildString {
-                append(getString(R.string.balance))
-                append(user!!.getBalance().balance.toString())
+            try
+            {
+                binding.balanceButton.text = buildString {
+                    append(getString(R.string.balance))
+                    append(user!!.getBalance().balance.toString())
+                }
+                if (user!!.getBalance().balance < user!!.getBalance().cap && notification.visibility == View.GONE)
+                {
+                    showNotificationDialog()
+                    notification.visibility = View.VISIBLE
+                }
+            }
+            catch (e: NullPointerException)
+            {
+                Toast.makeText(context, getString(R.string.balance_error, "null"), Toast.LENGTH_SHORT)
+                    .show()
             }
         }
         balanceButton.setOnClickListener()
@@ -306,7 +316,7 @@ class MainFragment : Fragment()
             {
                 override fun onFailure(call: Call<BalanceResponse>, t: Throwable)
                 {
-                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -316,18 +326,30 @@ class MainFragment : Fragment()
                 {
                     val balanceResponse = response.body()
 
-                    if (balanceResponse!!.balance.isNotEmpty())
+                    if (response.code() == 200)
                     {
-                        val balance = user!!.getBalance()
-                        balance.balance = balanceResponse.balance.toDouble()
-                        user!!.setBalance(balance)
-                        userViewModel.updateUser(user!!)
+                        try
+                        {
+                            val balance = user!!.getBalance()
+                            balance.balance = balanceResponse!!.balance.toDouble()
+                            user!!.setBalance(balance)
+                            userViewModel.updateUser(user!!)
+                            updateReadings()
+                        }
+                        catch (e: NullPointerException)
+                        {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.balance_error, response.message()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            getString(R.string.balance_error, balanceResponse.message),
+                            getString(R.string.balance_error, response.message()),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -346,46 +368,68 @@ class MainFragment : Fragment()
     {
         apiClient.getApiService()
             .getLastReadings(token = "Bearer ${SaveSharedPreference(requireContext()).getToken()}")
-            .enqueue(object : Callback<StoreReadingsRequestArr>
+            .enqueue(object : Callback<GetReadingsRequestArr>
             {
-                override fun onFailure(call: Call<StoreReadingsRequestArr>, t: Throwable)
+                override fun onFailure(call: Call<GetReadingsRequestArr>, t: Throwable)
                 {
-                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
-                    call: Call<StoreReadingsRequestArr>,
-                    response: Response<StoreReadingsRequestArr>
+                    call: Call<GetReadingsRequestArr>,
+                    response: Response<GetReadingsRequestArr>
                 )
                 {
                     val readingsResponse = response.body()
 
-                    if (readingsResponse != null)
+                    if (response.code() == 200)
                     {
-                        val balance = user!!.getBalance()
-                        for (reading in readingsResponse.readings)
+                        try
                         {
-                            when (reading.type)
+                            val balance = user!!.getBalance()
+                            for (reading in readingsResponse!!.readings)
                             {
-                                ReadingType.UNKNOWN.ordinal -> Toast.makeText(
-                                    context,
-                                    getString(R.string.unknown_type),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                ReadingType.ELECTRICITY.ordinal -> balance.electricity = reading.value
-                                ReadingType.COLD_WATER.ordinal -> balance.coldWater = reading.value
-                                ReadingType.HOT_WATER.ordinal -> balance.hotWater = reading.value
-                                ReadingType.HOUSE_HEATING.ordinal -> balance.houseHeating = reading.value
-                                ReadingType.MAINTENANCE.ordinal -> balance.maintenance = reading.value
+                                when (reading.type)
+                                {
+                                    ReadingType.UNKNOWN.ordinal -> Toast.makeText(
+                                        context,
+                                        getString(R.string.unknown_type),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    ReadingType.ELECTRICITY.ordinal -> balance.electricity =
+                                        reading.value
+
+                                    ReadingType.COLD_WATER.ordinal -> balance.coldWater =
+                                        reading.value
+
+                                    ReadingType.HOT_WATER.ordinal -> balance.hotWater =
+                                        reading.value
+
+                                    ReadingType.HOUSE_HEATING.ordinal -> balance.houseHeating =
+                                        reading.value
+
+                                    ReadingType.MAINTENANCE.ordinal -> balance.maintenance =
+                                        reading.value
+                                }
                             }
+                            userViewModel.updateUser(user!!)
+                            updatePayments()
                         }
-                        userViewModel.updateUser(user!!)
+                        catch (e: NullPointerException)
+                        {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.data_loading_error, response.message()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            getString(R.string.data_loading_error),
+                            getString(R.string.data_loading_error, response.message()),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -408,7 +452,7 @@ class MainFragment : Fragment()
             {
                 override fun onFailure(call: Call<PaymentExt>, t: Throwable)
                 {
-                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -418,10 +462,22 @@ class MainFragment : Fragment()
                 {
                     val payments = response.body()
 
-                    if (payments != null)
+                    if (response.code() == 200)
                     {
-                        user?.setPayments(payments.payments)
-                        userViewModel.updateUser(user!!)
+                        try
+                        {
+                            user?.setPayments(payments!!.payments)
+                            userViewModel.updateUser(user!!)
+                            user = userViewModel.userData.value
+                        }
+                        catch (e: NullPointerException)
+                        {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.payments_loading_error, response.message()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     else
                     {
@@ -450,7 +506,7 @@ class MainFragment : Fragment()
             {
                 override fun onFailure(call: Call<UserHelper>, t: Throwable)
                 {
-                    Toast.makeText(context, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(
@@ -460,19 +516,31 @@ class MainFragment : Fragment()
                 {
                     val userHelper = response.body()
 
-                    if (userHelper!!.email.isNotEmpty())
+                    if (response.code() == 200)
                     {
-                        user!!.setName(userHelper.name)
-                        user!!.setINN(userHelper.INN)
-                        user!!.setAddress(userHelper.address)
-                        user!!.setEmail(userHelper.email)
-                        userViewModel.updateUser(user!!)
+                        try
+                        {
+                            user!!.setName(userHelper!!.name)
+                            user!!.setINN(userHelper.INN)
+                            user!!.setAddress(userHelper.address)
+                            user!!.setEmail(userHelper.email)
+                            userViewModel.updateUser(user!!)
+                            updateBalance()
+                        }
+                        catch (e: NullPointerException)
+                        {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.user_loading_error, response.message()),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                     else
                     {
                         Toast.makeText(
                             context,
-                            getString(R.string.user_loading_error, userHelper.message),
+                            getString(R.string.user_loading_error, response.message()),
                             Toast.LENGTH_SHORT
                         ).show()
                         requireActivity().startActivityFromFragment(
@@ -489,10 +557,6 @@ class MainFragment : Fragment()
     private fun updateAll()
     {
         updateUser()
-        updateBalance()
-        updateReadings()
-        updatePayments()
-        user = userViewModel.userData.value
     }
 
     private fun setData(data : ReadingType)

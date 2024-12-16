@@ -50,14 +50,17 @@
     <string name="cancel">Отмена</string>
     <string name="heating">Отопление: </string>
     <string name="maintenance">Обслуживание: </string>
-    <string name="something_went_wrong">Something went wrong</string>
+    <string name="something_went_wrong">Something went wrong: %1$s</string>
     <string name="registration_error">Ошибка при регистрации: %1$s</string>
     <string name="email_or_pwd_wrong">Почта или пароль неверны.  %1$s</string>
     <string name="balance_error">Ошибка при загрузке баланса: %1$s</string>
     <string name="unknown_type">Неизвестный тип данных!</string>
-    <string name="data_loading_error">Ошибка при загрузке показаний</string>
-    <string name="payments_loading_error">Ошибка при загрузке платежей</string>
+    <string name="data_loading_error">Ошибка при загрузке показаний: %1$s</string>
+    <string name="payments_loading_error">Ошибка при загрузке платежей: %1$s</string>
     <string name="user_loading_error">Ошибка при загрузке пользователя: %1$s</string>
     <string name="successful_payment">Платёж успешный!</string>
     <string name="payment_error">Ошибка при платеже: %1$s</string>
+    <string name="data_sent">Данные переданы!</string>
+    <string name="data_sending_error">Ошибка при передаче данных: %1$s</string>
+    <string name="same_readings_error">Показания не могут быть меньше предыдущих или такими же</string>
 </resources>

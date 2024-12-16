@@ -38,26 +38,26 @@ import java.util.Locale
 
 class RegistrationFragment2 : Fragment(), CameraListener
 {
+    companion object
+    {
+        private const val DESIRED_ACCURACY: Double = 0.0
+        private const val MINIMAL_TIME: Long = 1000
+        private const val MINIMAL_DISTANCE: Double = 1.0
+        private const val USE_IN_BACKGROUND: Boolean = false
+        private const val COMFORTABLE_ZOOM_LEVEL: Float = 18F
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+    }
     private lateinit var binding: FragmentRegistration2Binding
     private lateinit var mapView: MapView
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
     private var curLocation: Point? = null
-    private val DESIRED_ACCURACY: Double = 0.0
-    private val MINIMAL_TIME: Long = 1000
-    private val MINIMAL_DISTANCE: Double = 1.0
-    private val USE_IN_BACKGROUND: Boolean = false
-    private val COMFORTABLE_ZOOM_LEVEL: Float = 18F
     private var zoomValue = COMFORTABLE_ZOOM_LEVEL
     private val userViewModel = UserViewModel.getInstance()
     private var user: UserData? = null
     private lateinit var mapObjectCollection: MapObjectCollection
     private lateinit var placemarkMapObject: PlacemarkMapObject
-
-    companion object
-    {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {

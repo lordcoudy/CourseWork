@@ -25,7 +25,7 @@ class AuthActivity : AppCompatActivity()
     private var data = false
     private var emailEntered = false
     private var passwordEntered = false
-    private var user : UserData? = null
+    private var user : UserData = UserData()
 
     private lateinit var binding: ActivityAuthBinding
     private val userViewModel = UserViewModel.getInstance()
@@ -82,21 +82,21 @@ class AuthActivity : AppCompatActivity()
                 .enqueue(object : Callback<AuthResponse>
                 {
                     override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                        Toast.makeText(this@AuthActivity, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AuthActivity, getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                         val loginResponse = response.body()
 
-                        if (loginResponse?.tokenType == "Bearer" && loginResponse.authToken.isNotEmpty()) {
-                            SaveSharedPreference(this@AuthActivity).setToken(loginResponse.authToken)
+                        if (response.code() == 200) {
+                            SaveSharedPreference(this@AuthActivity).setToken(loginResponse!!.authToken)
                             user = UserData(editTextEmail.text.toString())
-                            user?.setToken(loginResponse.authToken)
+                            user.setToken(loginResponse!!.authToken)
                             updateUser()
                             logInUser()
                         } else {
                             Toast.makeText(this@AuthActivity,
-                                getString(R.string.email_or_pwd_wrong, loginResponse?.message), Toast.LENGTH_SHORT).show()
+                                getString(R.string.email_or_pwd_wrong, response.message()), Toast.LENGTH_SHORT).show()
                         }
                     }
                 })
@@ -118,7 +118,7 @@ class AuthActivity : AppCompatActivity()
             user = UserData(editTextEmail.text.toString())
             SaveSharedPreference(this).setPassword(editTextPassword.text.toString())
             updateUser()
-            userViewModel.updateUser(user!!)
+            userViewModel.updateUser(user)
             startActivity(Intent(this, RegistrationActivity::class.java))
             finish()
         }

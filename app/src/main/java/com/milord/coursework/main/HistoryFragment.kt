@@ -16,7 +16,7 @@ import com.milord.coursework.utils.api.Payment
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
     private val userViewModel = UserViewModel.getInstance()
-    private var user : UserData? = null
+    private var user : UserData = UserData()
     private lateinit var paymentList : ArrayList<Payment>
     private lateinit var paymentAdapter : PaymentAdapter
     private lateinit var historyList : androidx.recyclerview.widget.RecyclerView
@@ -32,24 +32,39 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        user = userViewModel.userData.value
+        try
+        {
+            user = userViewModel.userData.value!!
+        }
+        catch (e: NullPointerException)
+        {
+            user = UserData()
+        }
         historyList = binding.historyListView
         val filterButton = binding.filterButton
-        paymentList = user!!.getPayments()
-        paymentAdapter = PaymentAdapter(paymentList)
+        try
+        {
+            paymentList = user.getPayments()
+            paymentAdapter = PaymentAdapter(paymentList)
+        }
+        catch (e: Exception)
+        {
+            paymentList = ArrayList()
+            paymentAdapter = PaymentAdapter(paymentList)
+        }
 
         userViewModel.userData.observe(viewLifecycleOwner) { userData ->
             user = userData
-            update(user!!.getPayments())
+            update(user.getPayments())
         }
 
         filterButton.setOnClickListener {
             val dialog = DatePickerDialog(requireContext())
             dialog.show()
             dialog.setOnDateSetListener { _, year, month, dayOfMonth ->
-                val date = "$dayOfMonth.${month+1}.$year"
+                val date = "$year-${month+1}-$dayOfMonth"
                 val filteredList =
-                    user!!.getPayments().filter { it.date == date } as ArrayList<Payment>
+                    user.getPayments().filter { it.date.startsWith(date) } as ArrayList<Payment>
                 update(filteredList)
             }
         }
@@ -60,6 +75,7 @@ class HistoryFragment : Fragment() {
 
     private fun update(newList:ArrayList<Payment>){
         paymentList = newList
+        paymentList.reverse()
         paymentAdapter = PaymentAdapter(paymentList)
         historyList.adapter = paymentAdapter
     }

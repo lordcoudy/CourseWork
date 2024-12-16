@@ -27,7 +27,7 @@ class RegistrationFragment3 : Fragment()
 {
     private lateinit var binding: FragmentRegistration3Binding
     private val userViewModel = UserViewModel.getInstance()
-    private var user : UserData? = null
+    private var user : UserData = UserData()
     private lateinit var apiClient: ApiClient
 
     override fun onCreateView(
@@ -42,7 +42,7 @@ class RegistrationFragment3 : Fragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?)
     {
         super.onViewCreated(view, savedInstanceState)
-        user = userViewModel.userData.value
+        user = userViewModel.userData.value!!
         val buttonNext = binding.nextButton3
         val buttonBack = binding.backButton3
         val INNEt = binding.editTextINN
@@ -54,8 +54,8 @@ class RegistrationFragment3 : Fragment()
         buttonNext.setOnClickListener {
             if (INNEt.text.toString().isNotEmpty())
             {
-                user?.setINN(INNEt.text.toString())
-                user?.let { it1 -> userViewModel.updateUser(it1) }
+                user.setINN(INNEt.text.toString())
+                user.let { it1 -> userViewModel.updateUser(it1) }
             }
             else
             {
@@ -64,31 +64,31 @@ class RegistrationFragment3 : Fragment()
             }
             apiClient = ApiClient()
             apiClient.getApiService().register(RegisterRequest(
-                email = user!!.getEmail(), password = SaveSharedPreference(requireContext()).getPassword()!!,
+                email = user.getEmail(), password = SaveSharedPreference(requireContext()).getPassword()!!,
                 passwordConfirmation = SaveSharedPreference(requireContext()).getPassword()!!,
-                name = user!!.getName(), INN = user!!.getINN(), address = user!!.getAddress())
+                name = user.getName(), INN = user.getINN(), address = user.getAddress())
             ).enqueue(object : Callback<AuthResponse>
                 {
                     override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
                         Toast.makeText(context,
-                            getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
+                            getString(R.string.something_went_wrong, t.message), Toast.LENGTH_SHORT).show()
                         SaveSharedPreference(requireContext()).clearPassword()
                     }
 
                     override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                         val registerResponse = response.body()
 
-                        if (registerResponse?.tokenType == "Bearer" && registerResponse.authToken.isNotEmpty()) {
-                            SaveSharedPreference(requireContext()).setToken(registerResponse.authToken)
-                            user?.setToken(registerResponse.authToken)
-                            userViewModel.updateUser(user!!)
+                        if (response.code() == 200) {
+                            SaveSharedPreference(requireContext()).setToken(registerResponse!!.authToken)
+                            user.setToken(registerResponse.authToken)
+                            userViewModel.updateUser(user)
                             SaveSharedPreference(requireContext()).setLogIn(true)
                             SaveSharedPreference(requireContext()).clearPassword()
                             requireActivity().startActivityFromFragment(this@RegistrationFragment3, Intent(requireActivity(), MainActivity::class.java), 0)
                             requireActivity().finish()
                         } else {
                             Toast.makeText(context,
-                                getString(R.string.registration_error, registerResponse?.message), Toast.LENGTH_SHORT).show()
+                                getString(R.string.registration_error, response.message()), Toast.LENGTH_SHORT).show()
                             SaveSharedPreference(requireContext()).clearPassword()
                             requireActivity().startActivityFromFragment(
                                 this@RegistrationFragment3,
@@ -105,8 +105,8 @@ class RegistrationFragment3 : Fragment()
         buttonBack.setOnClickListener {
             if (INNEt.text.toString().isNotEmpty())
             {
-                user?.setINN(INNEt.text.toString())
-                user?.let { it1 -> userViewModel.updateUser(it1) }
+                user.setINN(INNEt.text.toString())
+                user.let { it1 -> userViewModel.updateUser(it1) }
             }
             findNavController().navigate(R.id.action_registrationFragment2_to_registrationFragment3)
         }

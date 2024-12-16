@@ -64,14 +64,9 @@ data class StoreReadingsRequest(
     var value: Double
 )
 
-data class StoreReadingsRequestArr(
+data class GetReadingsRequestArr(
     @SerializedName("value")
     var readings: ArrayList<StoreReadingsRequest>
-)
-
-data class StoreReadingsResponse (
-    @SerializedName("message")
-    var message: String
 )
 
 data class BalanceResponse (
@@ -82,13 +77,8 @@ data class BalanceResponse (
 )
 
 data class TopUpRequest (
-    @SerializedName("amount")
+    @SerializedName("value")
     var amount: Double
-)
-
-data class TopUpResponse (
-    @SerializedName("message")
-    var message: String
 )
 
 data class Payment(

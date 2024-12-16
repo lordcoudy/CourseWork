@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.milord.coursework.R
-import com.milord.coursework.data.Payment
+import com.milord.coursework.utils.api.Payment
 
 class PaymentAdapter (private val payments: List<Payment>) : RecyclerView.Adapter<PaymentViewHolder>()
 {

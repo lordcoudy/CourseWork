@@ -18,18 +18,18 @@ interface ApiInterface {
     fun register(@Body request: RegisterRequest): Call<AuthResponse>
 
     @POST(Constants.STORE_READINGS)
-    fun storeReadings(@Header("Authorization") token: String, @Body request: ArrayList<StoreReadingsRequest>): Call<StoreReadingsResponse>
+    fun storeReadings(@Header("Authorization") token: String, @Body request: ArrayList<StoreReadingsRequest>): Call<Void>
 
     @GET(Constants.BALANCE_URL)
     fun getBalance(@Header("Authorization") token: String): Call<BalanceResponse>
 
     @GET(Constants.LAST_READINGS)
-    fun getLastReadings(@Header("Authorization") token: String): Call<StoreReadingsRequestArr>
+    fun getLastReadings(@Header("Authorization") token: String): Call<GetReadingsRequestArr>
 
     @GET(Constants.PAYMENTS)
     fun getPayments(@Header("Authorization") token: String): Call<PaymentExt>
 
     @POST(Constants.TOP_UP)
-    fun topUp(@Header("Authorization") token: String, @Body request: TopUpRequest): Call<TopUpResponse>
+    fun topUp(@Header("Authorization") token: String, @Body request: TopUpRequest): Call<Void>
 
 }

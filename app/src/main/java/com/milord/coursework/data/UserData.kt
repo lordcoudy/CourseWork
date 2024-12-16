@@ -4,7 +4,7 @@ import com.milord.coursework.utils.api.Payment
 import com.milord.coursework.utils.api.UserHelper
 import java.util.ArrayList
 
-class UserData (email: String)
+class UserData (email: String = "")
 {
     private var userInfo : UserHelper = UserHelper("",0, "name", email, "", "")
     private var balance : BalanceData = BalanceData()
