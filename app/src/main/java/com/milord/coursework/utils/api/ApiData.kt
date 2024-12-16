@@ -7,8 +7,8 @@ enum class ReadingType {
     ELECTRICITY,
     COLD_WATER,
     HOT_WATER,
-    HOUSE_HEATING,
-    MAINTENANCE
+    MAINTENANCE,
+    HOUSE_HEATING
 }
 
 data class UserHelper(
