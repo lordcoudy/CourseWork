@@ -63,4 +63,5 @@
     <string name="data_sent">Данные переданы!</string>
     <string name="data_sending_error">Ошибка при передаче данных: %1$s</string>
     <string name="same_readings_error">Показания не могут быть меньше предыдущих или такими же</string>
+    <string name="data_hint">Для ввода показаний, заполните все поля новыми данными и нажмите на кнопку сохранить</string>
 </resources>

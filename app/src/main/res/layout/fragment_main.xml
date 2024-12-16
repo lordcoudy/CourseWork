@@ -337,6 +337,24 @@
 
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10sp"
+        app:cardCornerRadius="15sp"
+        app:cardElevation="10sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:hint="@string/data_hint"/>
+
+    </androidx.cardview.widget.CardView>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/updateAllButton"
         style="@style/Widget.Material3.ExtendedFloatingActionButton.Tertiary"
