@@ -62,8 +62,7 @@ class RegistrationFragment2 : Fragment(), CameraListener
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        // TODO: Obfuscate
-        MapKitFactory.setApiKey("926371cc-dc6d-4a4b-b8f2-fedd9a25585d")
+        MapKitFactory.setApiKey("MAPKIT_API_KEY")
         MapKitFactory.initialize(requireContext())
     }
 
