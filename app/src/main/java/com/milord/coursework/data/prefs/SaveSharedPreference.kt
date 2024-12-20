@@ -12,7 +12,7 @@ class SaveSharedPreference (context: Context)
     companion object {
         const val PREF_LOGIN = "login"
         const val PREF_USER_TOKEN = "access_token"
-        const val PREF_PASSWORD = ""
+        const val PREF_PASSWORD = "password"
     }
     private var prefs: SharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE)
 
